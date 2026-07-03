@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-color-primary: var(--color-primary);
+  --color-color-secondary: var(--color-secondary);
+  --color-color-accent: var(--color-accent);
+  --color-border-color: var(--border-color);
+  --color-border-hover: var(--border-hover);
+  --color-glass-bg: var(--glass-bg);
+  --color-tag-bg: var(--tag-bg);
+  
+  --background-image-gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  --background-image-gradient-accent: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  --animate-fade-in: fadeIn 0.8s ease-out forwards;
+  --animate-slide-up: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --bg-primary: #050806;
+  --bg-secondary: #0a110d;
+  --bg-gradient: linear-gradient(135deg, #020403 0%, #091410 100%);
+  --text-primary: #52c48d;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --color-primary: #52c48d;
+  --color-secondary: #047857;
+  --color-accent: #a7f3d0;
+  --border-color: rgba(82, 196, 141, 0.12);
+  --border-hover: rgba(82, 196, 141, 0.28);
+  --glass-bg: rgba(10, 17, 13, 0.85);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --tag-bg: rgba(82, 196, 141, 0.04);
+}
+
+body.light {
+  --bg-primary: #f0fbf4;
+  --bg-secondary: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #e6f7ed 0%, #ffffff 100%);
+  --text-primary: #059669;
+  --text-secondary: #1e293b;
+  --text-muted: #64748b;
+  --color-primary: #059669;
+  --color-secondary: #10b981;
+  --color-accent: #34d399;
+  --border-color: rgba(5, 150, 105, 0.12);
+  --border-hover: rgba(5, 150, 105, 0.3);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 32px 0 rgba(5, 150, 105, 0.05);
+  --tag-bg: rgba(5, 150, 105, 0.04);
+}
+
+/* Custom Scrollbar for premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom Tailwind Component Utility layers using apply compiler directives */
+@utility glass-card {
+  @apply bg-glass-bg backdrop-blur-[16px] border border-border-color rounded-2xl transition-all duration-300 ease-in-out shadow-lg;
+}
+
+body.light .glass-card {
+  @apply shadow-[0_8px_32px_0_rgba(5,150,105,0.05)];
+}
+
+@utility glass-card-hover {
+  @apply border-border-hover shadow-[0_12px_40px_0_rgba(0,0,0,0.45)];
+}
+
+body.light .glass-card-hover {
+  @apply shadow-[0_12px_40px_0_rgba(15,23,42,0.1)];
+}
+
+@utility gradient-text {
+  @apply bg-gradient-brand bg-clip-text text-transparent inline-block;
+}
+
+@utility accent-gradient-text {
+  @apply bg-gradient-accent bg-clip-text text-transparent inline-block;
+}
+
+@utility btn-primary {
+  @apply bg-gradient-brand text-white border-none font-heading font-semibold px-6 py-3 rounded-[30px] cursor-pointer transition-all duration-300 hover:translate-y-[-2px];
+}
+
+body.light .btn-primary {
+  @apply text-white;
+}
+
+@utility btn-secondary {
+  @apply bg-transparent text-text-primary border border-border-color font-heading font-semibold px-6 py-3 rounded-[30px] cursor-pointer transition-all duration-300 hover:bg-tag-bg hover:border-border-hover hover:translate-y-[-2px];
+}
