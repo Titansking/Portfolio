@@ -119,6 +119,10 @@ dist
 # Firebase cache directory
 .firebase/
 
+# Firebase service account private key - NEVER commit this!
+serviceAccountKey.json
+*serviceAccount*.json
+
 # TernJS port file
 .tern-port
 
