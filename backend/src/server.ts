@@ -28,9 +28,21 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-ashwani-portfolio-2026';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashwani-admin-2026';
 
-// Enable CORS so the React app running on port 5173 can talk to us
+// Enable CORS to support multiple frontend origins (e.g. localhost, production domain, Vercel deployments)
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) 
+  : ['http://localhost:5173'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, Postman or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200
 }));
 
