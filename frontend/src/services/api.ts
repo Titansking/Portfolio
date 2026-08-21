@@ -32,13 +32,18 @@ const getHeaders = (token?: string) => {
 // -------------------------------------------------------------
 
 export async function sendContactMessage(data: ContactData): Promise<ContactResponse> {
-  // 1. Attempt writing to local Express backend API
+  // 1. Attempt writing to local Express backend API (with 8s timeout)
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     const response = await fetch(`${API_URL}/contact`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     if (response.ok) {
       const result = await response.json();
@@ -49,7 +54,7 @@ export async function sendContactMessage(data: ContactData): Promise<ContactResp
       };
     }
   } catch (backendError) {
-    console.log('[API Service] Backend server offline. Falling back to direct Firebase write.', backendError);
+    console.log('[API Service] Backend unreachable or timed out. Falling back to direct Firebase write.', backendError);
   }
 
   // 2. Fallback: Write directly to Firebase Firestore using client Web SDK
@@ -71,7 +76,7 @@ export async function sendContactMessage(data: ContactData): Promise<ContactResp
     console.error('[Firestore Client] ❌ Direct write failed:', firestoreError);
     return {
       success: false,
-      message: firestoreError.message || 'Database write failed. Please check your internet connection!',
+      message: 'Unable to send your message. Please email me directly at akumarclash1@gmail.com',
       error: firestoreError.toString(),
     };
   }
