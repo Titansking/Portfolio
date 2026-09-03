@@ -5,66 +5,67 @@ export default function Skills() {
   const [activeTab, setActiveTab] = useState<'languages' | 'databases' | 'tools' | 'core'>('languages');
 
   const categories = [
-    { id: 'languages', label: 'Languages & Frameworks', icon: <Terminal size={18} /> },
-    { id: 'databases', label: 'Databases & Auth', icon: <Database size={18} /> },
-    { id: 'tools', label: 'Tools & AI Assist', icon: <Wrench size={18} /> },
-    { id: 'core', label: 'Core Competencies', icon: <Cpu size={18} /> },
+    { id: 'languages', label: 'Languages & Frontend', icon: <Terminal size={18} /> },
+    { id: 'databases', label: 'Backend & Databases', icon: <Database size={18} /> },
+    { id: 'tools', label: 'Auth, Tools & DevOps', icon: <Wrench size={18} /> },
+    { id: 'core', label: 'Core CS Competencies', icon: <Cpu size={18} /> },
   ];
 
   const skillsData = {
     languages: {
-      title: 'Languages & Web Frameworks',
-      subtitle: 'Languages I write and libraries/frameworks I leverage to build interactive web apps.',
+      title: 'Languages & Frontend Development',
+      subtitle: 'Languages and modern UI frameworks I use to build performant, responsive web applications.',
       skills: [
         { name: 'TypeScript', level: 'Advanced' },
-        { name: 'JavaScript', level: 'Advanced' },
+        { name: 'JavaScript (ES6+)', level: 'Advanced' },
         { name: 'Java', level: 'Intermediate' },
-        { name: 'ReactJS', level: 'Advanced' },
-        { name: 'NextJS', level: 'Intermediate' },
-        { name: 'Node.js', level: 'Advanced' },
-        { name: 'Express.js', level: 'Advanced' },
+        { name: 'React.js', level: 'Advanced' },
+        { name: 'Next.js', level: 'Intermediate' },
+        { name: 'HTML5', level: 'Advanced' },
+        { name: 'CSS3', level: 'Advanced' },
+        { name: 'SQL', level: 'Intermediate' },
         { name: 'Tailwind CSS', level: 'Advanced' },
-        { name: 'Shadcn UI', level: 'Advanced' },
-        { name: 'HTML5 / CSS3', level: 'Advanced' }
+        { name: 'Shadcn UI', level: 'Advanced' }
       ]
     },
     databases: {
-      title: 'Databases, ORM & Security',
-      subtitle: 'Technologies I use for database storage, relational queries, and cryptographic operations.',
+      title: 'Backend, APIs & Databases',
+      subtitle: 'Server architectures, microservices, RESTful design, and persistent databases.',
       skills: [
+        { name: 'Node.js', level: 'Advanced' },
+        { name: 'Express.js', level: 'Advanced' },
+        { name: 'RESTful APIs', level: 'Advanced' },
+        { name: 'Middleware Architecture', level: 'Advanced' },
+        { name: 'Microservices', level: 'Intermediate' },
         { name: 'MongoDB', level: 'Advanced' },
-        { name: 'PostgreSQL', level: 'Intermediate' },
         { name: 'MySQL', level: 'Intermediate' },
         { name: 'Convex', level: 'Advanced' },
-        { name: 'Mongoose', level: 'Advanced' },
-        { name: 'JWT (JSON Web Tokens)', level: 'Advanced' },
-        { name: 'Bcrypt', level: 'Advanced' }
+        { name: 'Mongoose', level: 'Advanced' }
       ]
     },
     tools: {
-      title: 'Tools & Intelligent Editors',
-      subtitle: 'DevOps setups, version control platforms, and AI-powered coding systems I use daily.',
+      title: 'Auth, Tools & DevOps',
+      subtitle: 'Authentication workflows, version control, operating systems, and developer tooling.',
       skills: [
-        { name: 'Git & GitHub', level: 'Advanced' },
+        { name: 'JWT', level: 'Advanced' },
+        { name: 'Bcrypt', level: 'Advanced' },
+        { name: 'Git', level: 'Advanced' },
+        { name: 'GitHub', level: 'Advanced' },
         { name: 'GitLab', level: 'Intermediate' },
-        { name: 'VS Code & Cursor', level: 'Advanced' },
-        { name: 'Linux Commands', level: 'Intermediate' },
-        { name: 'Axios Client', level: 'Advanced' },
-        { name: 'Claude & Gemini', level: 'Advanced' },
-        { name: 'GitHub Copilot', level: 'Advanced' },
-        { name: 'OpenAI Codex', level: 'Intermediate' }
+        { name: 'Linux', level: 'Intermediate' },
+        { name: 'VS Code', level: 'Advanced' },
+        { name: 'Postman', level: 'Advanced' },
+        { name: 'Axios', level: 'Advanced' }
       ]
     },
     core: {
-      title: 'Academic Core Competencies',
-      subtitle: 'Fundamental engineering principles and computer science foundations that drive my code.',
+      title: 'Core Computer Science Competencies',
+      subtitle: 'Fundamental engineering principles and core CS topics driving structured problem-solving.',
       skills: [
-        { name: 'Data Structures & Algorithms', level: 'Advanced' },
-        { name: 'RESTful API Design', level: 'Advanced' },
+        { name: 'Data Structures & Algorithms (DSA)', level: 'Advanced' },
         { name: 'Object-Oriented Programming (OOP)', level: 'Advanced' },
         { name: 'Database Management Systems (DBMS)', level: 'Advanced' },
-        { name: 'Operating Systems (OS)', level: 'Intermediate' },
-        { name: 'Software Architecture Patterns', level: 'Intermediate' }
+        { name: 'Operating Systems', level: 'Intermediate' }
       ]
     }
   };
@@ -76,7 +77,7 @@ export default function Skills() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-heading text-4xl font-bold mb-3">Technical <span className="gradient-text">Skills</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">My structured toolkit, covering front-end, backend development, databases, and AI coding setups.</p>
+          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Structured technical skillset matching production SaaS and real-time development experience.</p>
         </div>
 
         {/* Tab Selection Row */}
@@ -87,7 +88,7 @@ export default function Skills() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`glass-card flex items-center gap-2 px-6 py-3 cursor-pointer text-text-secondary transition-all duration-300 font-heading font-medium hover:text-color-primary ${
                 activeTab === tab.id 
-                  ? '!bg-gradient-brand !text-[#050806] font-bold shadow-[0_4px_15px_rgba(82,196,141,0.25)] dark:!text-[#050806] light:!text-white' 
+                  ? '!bg-gradient-brand !text-white font-bold shadow-[0_4px_15px_rgba(5,150,105,0.25)] border-transparent' 
                   : 'hover:bg-border-color'
               }`}
             >

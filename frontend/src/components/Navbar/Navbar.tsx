@@ -13,8 +13,10 @@ export default function Navbar() {
     
     if (initialTheme === 'light') {
       document.body.classList.add('light');
+      document.documentElement.classList.add('light');
     } else {
       document.body.classList.remove('light');
+      document.documentElement.classList.remove('light');
     }
   }, []);
 
@@ -33,8 +35,10 @@ export default function Navbar() {
     
     if (newTheme === 'light') {
       document.body.classList.add('light');
+      document.documentElement.classList.add('light');
     } else {
       document.body.classList.remove('light');
+      document.documentElement.classList.remove('light');
     }
   };
 
@@ -58,7 +62,7 @@ export default function Navbar() {
         {/* Brand Logo */}
         <a href="#" className="flex items-center gap-2 font-heading text-[1.3rem] font-bold text-text-primary no-underline tracking-tight">
           <Code className="text-color-primary" size={24} />
-          <span>Ashwani<span className="text-color-secondary">.dev</span></span>
+          <span>Ashwani<span className="text-color-primary">.dev</span></span>
         </a>
 
         {/* Desktop Menu links */}
@@ -67,7 +71,7 @@ export default function Navbar() {
             <a 
               key={link.name} 
               href={link.href} 
-              className="no-underline font-heading font-medium text-[0.95rem] text-text-secondary transition-colors duration-300 ease-in-out hover:text-text-primary relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-gradient-brand after:transition-all after:duration-300 after:ease-in-out hover:after:w-full"
+              className="no-underline font-heading font-medium text-[0.95rem] text-text-secondary transition-colors duration-300 ease-in-out hover:text-color-primary relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-gradient-brand after:transition-all after:duration-300 after:ease-in-out hover:after:w-full"
             >
               {link.name}
             </a>

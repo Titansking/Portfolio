@@ -52,20 +52,20 @@ export default function About() {
                 <p className="text-[0.9rem] text-text-secondary mt-1">Ex-Full-Stack Developer Intern @ Krafzen Inc.</p>
                 <div className="flex items-center gap-1.5 text-xs text-text-muted mt-1">
                   <MapPin size={16} className="text-color-primary" />
-                  <span>Kolkata, West Bengal, India</span>
+                  <span>Kolkata, India</span>
                 </div>
               </div>
             </div>
             
             <div className="flex flex-col gap-4 text-text-secondary text-[0.95rem] leading-relaxed">
               <p>
-                I am a B.Tech Graduate in Computer Science and Engineering from Rungta College. 
-                My journey into software engineering started with building web features and has evolved into 
-                architecting complex SaaS solutions.
+                I am pursuing my Bachelor of Technology in Computer Science and Engineering from Rungta College 
+                of Engineering and Technology (2022–2026). My journey into software engineering started with building web applications 
+                and has evolved into architecting scalable SaaS platforms and real-time systems.
               </p>
               <p>
-                I thrive in collaborative, fast-paced teams (like my remote full-stack developer intern tenure at Krafzen Inc.), 
-                where I can participate in sprint schedules, review pull requests, and contribute to system scaling challenges.
+                I thrive in collaborative, fast-paced teams (demonstrated during my remote full-stack developer internship at Krafzen Inc.), 
+                where I engineered full-stack SaaS features, participated in sprint workflows, and resolved architectural bottlenecks.
               </p>
               <div className="mt-2">
                 <button onClick={handleDownloadResume} className="btn btn-secondary flex items-center gap-2">
@@ -85,10 +85,10 @@ export default function About() {
                   <GraduationCap size={10} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[0.8rem] font-bold text-color-primary">2022 - 2026</span>
-                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">B.Tech in Computer Science & Engineering</h4>
+                  <span className="text-[0.8rem] font-bold text-color-primary">2022 – 2026</span>
+                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">Bachelor of Technology in Computer Science and Engineering</h4>
                   <p className="text-text-secondary text-[0.95rem]">Rungta College of Engineering and Technology</p>
-                  <p className="text-[0.85rem] text-text-muted">Bhilai, Chhattisgarh</p>
+                  <p className="text-[0.85rem] text-text-muted">Bhilai, India</p>
                 </div>
               </div>
 
@@ -97,10 +97,10 @@ export default function About() {
                   <GraduationCap size={10} />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-[0.8rem] font-bold text-color-primary">2020 - 2022</span>
-                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">Higher Secondary Education</h4>
+                  <span className="text-[0.8rem] font-bold text-color-primary">2020 – 2022</span>
+                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">Higher Secondary Education (Class XII)</h4>
                   <p className="text-text-secondary text-[0.95rem]">Sardar Patel Public School</p>
-                  <p className="text-[0.85rem] text-text-muted">Bokaro, Jharkhand</p>
+                  <p className="text-[0.85rem] text-text-muted">Bokaro, India</p>
                 </div>
               </div>
             </div>
