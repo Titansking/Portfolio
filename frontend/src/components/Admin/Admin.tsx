@@ -194,7 +194,7 @@ export default function Admin() {
                 placeholder="Enter password..."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none text-center transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                className="portfolio-input text-center"
                 required
               />
             </div>
@@ -254,7 +254,7 @@ export default function Admin() {
         <button 
           onClick={() => { setActiveTab('messages'); resetProjectForm(); resetBlogForm(); }}
           className={`flex items-center gap-2 px-6 py-3 bg-transparent border-none text-text-secondary font-heading font-semibold text-[1.05rem] cursor-pointer rounded-[30px] transition-all duration-300 hover:text-color-primary hover:bg-tag-bg ${
-            activeTab === 'messages' ? '!bg-gradient-brand !text-[#050806] font-bold shadow-[0_4px_15px_rgba(82,196,141,0.25)] dark:!text-[#050806] light:!text-white' : ''
+            activeTab === 'messages' ? '!bg-gradient-brand !text-white font-bold shadow-[0_4px_15px_rgba(5,150,105,0.25)]' : ''
           }`}
         >
           <Mail size={16} /> Messages ({messages.length})
@@ -262,7 +262,7 @@ export default function Admin() {
         <button 
           onClick={() => { setActiveTab('projects'); resetProjectForm(); }}
           className={`flex items-center gap-2 px-6 py-3 bg-transparent border-none text-text-secondary font-heading font-semibold text-[1.05rem] cursor-pointer rounded-[30px] transition-all duration-300 hover:text-color-primary hover:bg-tag-bg ${
-            activeTab === 'projects' ? '!bg-gradient-brand !text-[#050806] font-bold shadow-[0_4px_15px_rgba(82,196,141,0.25)] dark:!text-[#050806] light:!text-white' : ''
+            activeTab === 'projects' ? '!bg-gradient-brand !text-white font-bold shadow-[0_4px_15px_rgba(5,150,105,0.25)]' : ''
           }`}
         >
           <Briefcase size={16} /> Projects ({projects.length})
@@ -270,7 +270,7 @@ export default function Admin() {
         <button 
           onClick={() => { setActiveTab('blogs'); resetBlogForm(); }}
           className={`flex items-center gap-2 px-6 py-3 bg-transparent border-none text-text-secondary font-heading font-semibold text-[1.05rem] cursor-pointer rounded-[30px] transition-all duration-300 hover:text-color-primary hover:bg-tag-bg ${
-            activeTab === 'blogs' ? '!bg-gradient-brand !text-[#050806] font-bold shadow-[0_4px_15px_rgba(82,196,141,0.25)] dark:!text-[#050806] light:!text-white' : ''
+            activeTab === 'blogs' ? '!bg-gradient-brand !text-white font-bold shadow-[0_4px_15px_rgba(5,150,105,0.25)]' : ''
           }`}
         >
           <MessageSquare size={16} /> Blog Posts ({blogs.length})
@@ -325,7 +325,7 @@ export default function Admin() {
                     value={projectForm.title}
                     onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
                     placeholder="e.g. Google Docs Clone"
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -336,7 +336,7 @@ export default function Admin() {
                     value={projectForm.subtitle}
                     onChange={(e) => setProjectForm({ ...projectForm, subtitle: e.target.value })}
                     placeholder="e.g. Real-time Collaboration Tool"
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
               </div>
@@ -348,7 +348,7 @@ export default function Admin() {
                   value={projectForm.description}
                   onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
                   placeholder="Summary of what the project does..."
-                  className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                  className="portfolio-input resize-y"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -359,7 +359,7 @@ export default function Admin() {
                     value={projectForm.github}
                     onChange={(e) => setProjectForm({ ...projectForm, github: e.target.value })}
                     placeholder="https://github.com/..."
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -369,7 +369,7 @@ export default function Admin() {
                     value={projectForm.demo}
                     onChange={(e) => setProjectForm({ ...projectForm, demo: e.target.value })}
                     placeholder="#"
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
               </div>
@@ -381,7 +381,7 @@ export default function Admin() {
                   value={projectForm.tech}
                   onChange={(e) => setProjectForm({ ...projectForm, tech: e.target.value })}
                   placeholder="React.js, TypeScript, Convex, Liveblocks"
-                  className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                  className="portfolio-input"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -392,7 +392,7 @@ export default function Admin() {
                   value={projectForm.highlights}
                   onChange={(e) => setProjectForm({ ...projectForm, highlights: e.target.value })}
                   placeholder="Real-Time Sync: description&#10;Presence: cursors tracking..."
-                  className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                  className="portfolio-input resize-y"
                 />
               </div>
               <div className="flex gap-3 mt-3">
@@ -451,7 +451,7 @@ export default function Admin() {
                     value={blogForm.title}
                     onChange={(e) => setBlogForm({ ...blogForm, title: e.target.value })}
                     placeholder="e.g. Refactoring React cycles"
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -462,7 +462,7 @@ export default function Admin() {
                     value={blogForm.readTime}
                     onChange={(e) => setBlogForm({ ...blogForm, readTime: e.target.value })}
                     placeholder="e.g. 5 min read"
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                    className="portfolio-input"
                   />
                 </div>
               </div>
@@ -474,7 +474,7 @@ export default function Admin() {
                   value={blogForm.excerpt}
                   onChange={(e) => setBlogForm({ ...blogForm, excerpt: e.target.value })}
                   placeholder="One sentence summary of the article..."
-                  className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                  className="portfolio-input"
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -485,7 +485,7 @@ export default function Admin() {
                   value={blogForm.content}
                   onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })}
                   placeholder="Main body content..."
-                  className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)]"
+                  className="portfolio-input resize-y"
                 />
               </div>
               <div className="flex gap-3 mt-3">

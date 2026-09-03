@@ -70,8 +70,8 @@ export default function Hero() {
   return (
     <section id="hero" className="min-h-screen flex items-center relative overflow-hidden pt-[140px] pb-[80px]">
       {/* Background ambient glow bubbles */}
-      <div className="absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 bg-[rgba(82,196,141,0.12)] body.light:bg-[rgba(5,150,105,0.04)] top-[10%] right-[10%]"></div>
-      <div className="absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 bg-[rgba(167,243,208,0.08)] body.light:bg-[rgba(167,243,208,0.03)] bottom-[20%] left-[5%]"></div>
+      <div className="hero-glow-1 absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 top-[10%] right-[10%]"></div>
+      <div className="hero-glow-2 absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 bottom-[20%] left-[5%]"></div>
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center relative z-10 animate-fade-in">
         <div className="flex flex-col gap-6">

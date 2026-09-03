@@ -26,22 +26,22 @@ export default function Achievements() {
     {
       title: 'Data Structures & Algorithms',
       issuer: 'Coding Ninjas',
-      description: 'Comprehensive course covering fundamental algorithms and problem-solving techniques.'
+      description: 'Comprehensive course and problem-solving mastery focusing on core algorithms and data structures.'
     },
     {
-      title: 'Web Dev Bootcamp – 30 Days Coding',
-      issuer: 'MERN Stack & Web Dev',
-      description: 'Full-stack development covering HTML, CSS, JavaScript, and database connections.'
+      title: 'Full-Stack Web Development',
+      issuer: '30 Days Coding',
+      description: 'Full-stack engineering covering modern frontend frameworks, RESTful APIs, and database architectures.'
     },
     {
       title: 'Java Programming',
-      issuer: 'Oracle Certified',
-      description: 'OOP programming principles, exception handling, data structures, and Java core fundamentals.'
+      issuer: 'Oracle',
+      description: 'Object-oriented programming, data structures, exception handling, and core Java engineering fundamentals.'
     },
     {
-      title: 'Git & GitHub',
-      issuer: 'FreeCodeCamp',
-      description: 'Version control methodologies, branch workflows, and remote repository collaboration.'
+      title: 'Open Source Contribution',
+      issuer: 'Hacktoberfest 2023 & Tree-Nation',
+      description: 'Merged 4 pull requests during Hacktoberfest; recognized with an official community tree planted via Tree-Nation.'
     }
   ];
 
@@ -50,7 +50,7 @@ export default function Achievements() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-heading text-4xl font-bold mb-3">Achievements & <span className="gradient-text">Certifications</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Verified certificates, coding statistics, and letters of recommendation from my journey.</p>
+          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Verified certificates, coding statistics, and letter of recommendation from my journey.</p>
         </div>
 
         {/* Featured Recommendation Quote */}
@@ -59,11 +59,11 @@ export default function Achievements() {
             <Award size={32} />
           </div>
           <blockquote className="font-heading text-lg sm:text-xl italic font-medium text-text-primary leading-relaxed max-w-[700px]">
-            "Received a Letter of Recommendation recognizing strong full-stack skills, reliable, and proactive work during the internship."
+            "Commended for technical execution, ownership, and reliability across our core full-stack platforms."
           </blockquote>
           <div className="flex flex-col gap-1">
             <span className="font-heading font-bold text-text-primary text-[1.1rem]">Khadija Zain</span>
-            <span className="text-xs text-text-muted">CEO, Krafzen Inc.</span>
+            <span className="text-xs text-text-muted font-medium">CEO, Krafzen Inc.</span>
           </div>
         </div>
 

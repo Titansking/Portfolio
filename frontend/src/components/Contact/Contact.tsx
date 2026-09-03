@@ -95,7 +95,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-[0.8rem] text-text-muted font-medium">Location</p>
-                  <p className="font-heading font-semibold text-text-primary text-[0.95rem] mt-0.5">Kolkata, West Bengal, India</p>
+                  <p className="font-heading font-semibold text-text-primary text-[0.95rem] mt-0.5">Kolkata, India</p>
                 </div>
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function Contact() {
                     onChange={handleInputChange}
                     placeholder="John Doe"
                     disabled={status === 'sending'}
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)] disabled:opacity-50"
+                    className="portfolio-input disabled:opacity-50"
                     required
                   />
                 </div>
@@ -150,7 +150,7 @@ export default function Contact() {
                     onChange={handleInputChange}
                     placeholder="john@example.com"
                     disabled={status === 'sending'}
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)] disabled:opacity-50"
+                    className="portfolio-input disabled:opacity-50"
                     required
                   />
                 </div>
@@ -165,7 +165,7 @@ export default function Contact() {
                     onChange={handleInputChange}
                     placeholder="Hey Ashwani, I'd like to talk about..."
                     disabled={status === 'sending'}
-                    className="w-full px-4 py-3 bg-white/[0.02] border border-border-color rounded-lg text-text-primary text-[0.95rem] outline-none transition-all duration-300 hover:border-color-primary/40 focus:border-color-primary focus:shadow-[0_0_10px_rgba(82,196,141,0.15)] disabled:opacity-50"
+                    className="portfolio-input disabled:opacity-50 resize-y"
                     required
                   />
                 </div>

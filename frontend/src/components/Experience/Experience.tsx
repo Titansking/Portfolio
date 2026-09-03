@@ -2,13 +2,12 @@ import { Calendar, Briefcase, Award, CheckCircle } from 'lucide-react';
 
 export default function Experience() {
   const contributions = [
-    'Refactored shared React components to improve rendering speed, making heavy client pages load noticeably faster.',
-    'Assisted in engineering two SaaS applications from basic architectural build-out up to production release.',
-    'Collaborated daily with backend and UI/UX design teams to meet deadline-driven sprint milestones.',
-    'Reviewed code submissions and debugged multiple critical production bugs impacting performance.'
+    'Engineered responsive web applications across the full stack using React.js and Node.js, restructuring component lifecycles to cut initial render latency by 20%.',
+    'Collaborated directly with product teams to build and deploy 2 core SaaS platforms and AI features, streamlining sprint workflows and shortening cycle times by 15%.',
+    'Conducted 30+ peer code reviews and diagnosed critical architectural bottlenecks, reducing regression issues and codebase technical debt by 25%.'
   ];
 
-  const toolsUsed = ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'REST APIs', 'SaaS Architecture'];
+  const toolsUsed = ['React.js', 'Node.js', 'Express.js', 'TypeScript', 'MongoDB', 'RESTful APIs', 'Microservices', 'Tailwind CSS'];
 
   return (
     <section id="experience" className="py-24 relative">
@@ -71,9 +70,8 @@ export default function Experience() {
               <div className="flex items-start gap-4 p-5 bg-color-primary/5 border border-color-primary/15 rounded-xl mt-4">
                 <Award size={20} className="text-color-primary shrink-0 mt-0.5" />
                 <p className="text-[0.9rem] text-text-secondary leading-relaxed">
-                  <strong>Letter of Recommendation Awarded:</strong> Received official LOR from CEO Khadija Zain, 
-                  recognizing strong full-stack technical capability, reliability, and proactive bug resolution during 
-                  the internship tenure.
+                  <strong>Letter of Recommendation:</strong> Commended by Khadija Zain (CEO, Krafzen Inc.) 
+                  for technical execution, ownership, and reliability across full-stack deliverables.
                 </p>
               </div>
             </div>
