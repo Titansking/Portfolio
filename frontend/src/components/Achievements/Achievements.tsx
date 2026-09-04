@@ -4,13 +4,13 @@ export default function Achievements() {
   const stats = [
     {
       icon: <Code2 size={24} />,
-      value: '400+',
+      value: '400+'
       label: 'Coding Ninjas Problems',
       detail: 'Solved mostly in Java, focusing on complex recursion, trees, and dynamic programming.'
     },
     {
       icon: <Code2 size={24} />,
-      value: '140+',
+      value: '160+',
       label: 'GeeksforGeeks Problems',
       detail: 'Data structure challenges covering arrays, search, sorting algorithms, and system designs.'
     },
