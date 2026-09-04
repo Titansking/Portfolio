@@ -4,7 +4,7 @@ export default function Achievements() {
   const stats = [
     {
       icon: <Code2 size={24} />,
-      value: '400+'
+      value: '400+',
       label: 'Coding Ninjas Problems',
       detail: 'Solved mostly in Java, focusing on complex recursion, trees, and dynamic programming.'
     },
