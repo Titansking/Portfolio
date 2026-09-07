@@ -29,15 +29,19 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-ashwani-portfolio
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashwani-admin-2026';
 
 // Enable CORS to support multiple frontend origins (e.g. localhost, production domain, Vercel deployments)
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(',').map(url => url.trim()) 
-  : ['http://localhost:5173'];
+const allowedOrigins = (
+  process.env.FRONTEND_URL 
+    ? process.env.FRONTEND_URL.split(',').map(url => url.trim().replace(/\/$/, '')) 
+    : ['http://localhost:5173']
+);
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps, Postman or curl)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+    // Normalize origin by stripping trailing slash before comparing
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    if (allowedOrigins.indexOf(normalizedOrigin) !== -1 || allowedOrigins.includes('*')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -45,6 +49,7 @@ app.use(cors({
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
   optionsSuccessStatus: 200
 }));
 
