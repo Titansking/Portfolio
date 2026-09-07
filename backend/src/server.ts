@@ -29,22 +29,33 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-ashwani-portfolio
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashwani-admin-2026';
 
 // Enable CORS to support multiple frontend origins (e.g. localhost, production domain, Vercel deployments)
-const allowedOrigins = (
-  process.env.FRONTEND_URL 
-    ? process.env.FRONTEND_URL.split(',').map(url => url.trim().replace(/\/$/, '')) 
-    : ['http://localhost:5173']
-);
+// Always include known production origins as defaults so CORS works even if env var is misconfigured
+const DEFAULT_ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://portfolio--ashwani.vercel.app',
+];
+
+const envOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim().replace(/\/$/, ''))
+  : [];
+
+// Merge env-based origins with hardcoded defaults (deduplicated)
+const allowedOrigins = [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...envOrigins])];
+
+console.log('[CORS] Allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, Postman or curl)
+    // Allow requests with no origin (like Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
-    // Normalize origin by stripping trailing slash before comparing
+    // Normalize: strip trailing slash
     const normalizedOrigin = origin.replace(/\/$/, '');
-    if (allowedOrigins.indexOf(normalizedOrigin) !== -1 || allowedOrigins.includes('*')) {
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.warn(`[CORS] Blocked request from origin: ${origin}`);
+      callback(new Error(`CORS: Origin ${origin} is not allowed.`));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
