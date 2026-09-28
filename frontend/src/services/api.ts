@@ -1,6 +1,3 @@
-import { db } from './firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export interface ContactData {
@@ -14,6 +11,64 @@ export interface ContactResponse {
   message: string;
   id?: string;
   error?: string;
+}
+
+/* Record shapes returned by the API. The dashboard and the blog feed both
+   render these directly, so they are described once here instead of being
+   re-declared as `any` at every call site. Fields the backend may omit are
+   optional, and the readers already guard on them. */
+
+export interface ContactMessage {
+  id?: string;
+  name: string;
+  email: string;
+  message: string;
+  /** ISO string or epoch millis, depending on the store. */
+  createdAt?: string | number;
+}
+
+export interface Project {
+  id?: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  tech: string[];
+  github: string;
+  demo: string;
+  highlights: string[];
+}
+
+export interface BlogPost {
+  id?: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  readTime: string;
+  date?: string;
+}
+
+export interface Analytics {
+  views: number;
+  projectsCount: number;
+  blogsCount: number;
+}
+
+/** Payloads sent to create/update. Identical to the records today, but named
+    separately so a future backend change has one place to land. */
+export type ProjectInput = Omit<Project, 'id'>;
+export type BlogInput = Omit<BlogPost, 'id' | 'date'>;
+
+export interface LoginResponse {
+  success: boolean;
+  token?: string;
+  error?: string;
+}
+
+/** Narrows an unknown catch binding to a readable message. */
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  return 'Unknown error';
 }
 
 // Helper to compile request headers with auth token if present
@@ -57,8 +112,15 @@ export async function sendContactMessage(data: ContactData): Promise<ContactResp
     console.log('[API Service] Backend unreachable or timed out. Falling back to direct Firebase write.', backendError);
   }
 
-  // 2. Fallback: Write directly to Firebase Firestore using client Web SDK
+  // 2. Fallback: Write directly to Firebase Firestore using client Web SDK.
+  //    Imported lazily so the Firestore SDK lands in its own chunk and is only
+  //    downloaded when the Express backend is actually unreachable.
   try {
+    const [{ db }, { addDoc, collection, serverTimestamp }] = await Promise.all([
+      import('./firebase'),
+      import('firebase/firestore'),
+    ]);
+
     const docRef = await addDoc(collection(db, 'messages'), {
       name: data.name,
       email: data.email,
@@ -72,17 +134,17 @@ export async function sendContactMessage(data: ContactData): Promise<ContactResp
       message: 'Success! Your message has been saved directly to Firestore database.',
       id: docRef.id,
     };
-  } catch (firestoreError: any) {
+  } catch (firestoreError) {
     console.error('[Firestore Client] ❌ Direct write failed:', firestoreError);
     return {
       success: false,
       message: 'Unable to send your message. Please email me directly at akumarclash1@gmail.com',
-      error: firestoreError.toString(),
+      error: errorMessage(firestoreError),
     };
   }
 }
 
-export async function fetchContactMessages(token: string): Promise<any[]> {
+export async function fetchContactMessages(token: string): Promise<ContactMessage[]> {
   try {
     const response = await fetch(`${API_URL}/messages`, {
       headers: getHeaders(token),
@@ -99,7 +161,7 @@ export async function fetchContactMessages(token: string): Promise<any[]> {
 // Authentication Endpoints
 // -------------------------------------------------------------
 
-export async function adminLogin(password: string): Promise<{ success: boolean; token?: string; error?: string }> {
+export async function adminLogin(password: string): Promise<LoginResponse> {
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
@@ -112,8 +174,8 @@ export async function adminLogin(password: string): Promise<{ success: boolean; 
       throw new Error(result.error || 'Authentication failed.');
     }
     return { success: true, token: result.token };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    return { success: false, error: errorMessage(error) };
   }
 }
 
@@ -121,7 +183,7 @@ export async function adminLogin(password: string): Promise<{ success: boolean; 
 // Projects CRUD Endpoints
 // -------------------------------------------------------------
 
-export async function fetchProjects(): Promise<any[]> {
+export async function fetchProjects(): Promise<Project[]> {
   try {
     const response = await fetch(`${API_URL}/projects`);
     if (!response.ok) throw new Error('Failed to fetch projects list.');
@@ -132,7 +194,7 @@ export async function fetchProjects(): Promise<any[]> {
   }
 }
 
-export async function createProject(project: any, token: string): Promise<boolean> {
+export async function createProject(project: ProjectInput, token: string): Promise<boolean> {
   try {
     const response = await fetch(`${API_URL}/projects`, {
       method: 'POST',
@@ -146,7 +208,7 @@ export async function createProject(project: any, token: string): Promise<boolea
   }
 }
 
-export async function updateProject(id: string, project: any, token: string): Promise<boolean> {
+export async function updateProject(id: string, project: ProjectInput, token: string): Promise<boolean> {
   try {
     const response = await fetch(`${API_URL}/projects/${id}`, {
       method: 'PUT',
@@ -190,7 +252,7 @@ export async function likeProject(id: string): Promise<boolean> {
 // Blogs CRUD Endpoints
 // -------------------------------------------------------------
 
-export async function fetchBlogs(): Promise<any[]> {
+export async function fetchBlogs(): Promise<BlogPost[]> {
   try {
     const response = await fetch(`${API_URL}/blogs`);
     if (!response.ok) throw new Error('Failed to fetch blog list.');
@@ -201,7 +263,7 @@ export async function fetchBlogs(): Promise<any[]> {
   }
 }
 
-export async function createBlog(blog: any, token: string): Promise<boolean> {
+export async function createBlog(blog: BlogInput, token: string): Promise<boolean> {
   try {
     const response = await fetch(`${API_URL}/blogs`, {
       method: 'POST',
@@ -215,7 +277,7 @@ export async function createBlog(blog: any, token: string): Promise<boolean> {
   }
 }
 
-export async function updateBlog(id: string, blog: any, token: string): Promise<boolean> {
+export async function updateBlog(id: string, blog: BlogInput, token: string): Promise<boolean> {
   try {
     const response = await fetch(`${API_URL}/blogs/${id}`, {
       method: 'PUT',
@@ -246,7 +308,7 @@ export async function deleteBlog(id: string, token: string): Promise<boolean> {
 // Analytics Endpoints
 // -------------------------------------------------------------
 
-export async function fetchAnalytics(): Promise<{ views: number; projectsCount: number; blogsCount: number } | null> {
+export async function fetchAnalytics(): Promise<Analytics | null> {
   try {
     const response = await fetch(`${API_URL}/analytics`);
     if (!response.ok) throw new Error('Failed to fetch analytics.');
@@ -287,7 +349,7 @@ export async function checkBackendHealth(): Promise<boolean> {
   try {
     const response = await fetch(API_URL);
     return response.ok;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

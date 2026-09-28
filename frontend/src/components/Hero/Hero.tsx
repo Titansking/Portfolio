@@ -1,27 +1,32 @@
-import { useState, useEffect } from 'react';
-import { Mail, ArrowRight, CheckCircle2, Download } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { ArrowDownRight, Download } from 'lucide-react';
 import { trackResumeDownload } from '../../services/api';
+import profileImg from '../../assets/profile-cutout.png';
+import profileWebp from '../../assets/profile-cutout.webp';
+import { Container } from '../ui/Section';
 
-const GithubIcon = () => (
-  <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-    <path d="M9 18c-4.51 2-5-2-7-2"></path>
-  </svg>
-);
-
-const LinkedinIcon = () => (
-  <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-    <rect x="2" y="9" width="4" height="12"></rect>
-    <circle cx="4" cy="4" r="2"></circle>
-  </svg>
-);
+const SHIPS = ['full-stack apps', 'SaaS products', 'open source tools'];
 
 export default function Hero() {
-  const [typedText, setTypedText] = useState('');
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
 
-  const handleDownloadResume = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (reduce || paused) return;
+
+    const id = window.setInterval(() => {
+      // Pause the rotator while the tab is in the background.
+      if (document.visibilityState === 'visible') {
+        setRoleIndex((i) => (i + 1) % SHIPS.length);
+      }
+    }, 2800);
+
+    return () => window.clearInterval(id);
+  }, [reduce, paused]);
+
+  const handleDownloadResume = () => {
     trackResumeDownload();
     const link = document.createElement('a');
     link.href = '/resume.pdf';
@@ -30,140 +35,165 @@ export default function Hero() {
     link.click();
     document.body.removeChild(link);
   };
-  const roles = ['Full-Stack Developer', 'SaaS App Builder', 'Open Source Contributor'];
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    const currentRole = roles[roleIndex];
-    let timer: any;
-
-    if (isDeleting) {
-      timer = setTimeout(() => {
-        setTypedText(currentRole.substring(0, charIndex - 1));
-        setCharIndex((prev) => prev - 1);
-      }, 50);
-    } else {
-      timer = setTimeout(() => {
-        setTypedText(currentRole.substring(0, charIndex + 1));
-        setCharIndex((prev) => prev + 1);
-      }, 100);
-    }
-
-    if (!isDeleting && charIndex === currentRole.length) {
-      timer = setTimeout(() => setIsDeleting(true), 1500);
-    } else if (isDeleting && charIndex === 0) {
-      setIsDeleting(false);
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }
-
-    return () => clearTimeout(timer);
-  }, [charIndex, isDeleting, roleIndex]);
-
-  const socialLinks = [
-    { icon: <GithubIcon />, url: 'https://github.com/Titansking', label: 'GitHub' },
-    { icon: <LinkedinIcon />, url: 'https://linkedin.com/in/ashwani-kumar-898189281', label: 'LinkedIn' },
-    { icon: <Mail size={22} />, url: 'mailto:akumarclash1@gmail.com', label: 'Email' }
-  ];
+  const activeShip = SHIPS[reduce ? 0 : roleIndex];
 
   return (
-    <section id="hero" className="min-h-screen flex items-center relative overflow-hidden pt-[140px] pb-[80px]">
-      {/* Background ambient glow bubbles */}
-      <div className="hero-glow-1 absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 top-[10%] right-[10%]"></div>
-      <div className="hero-glow-2 absolute w-[400px] h-[400px] rounded-full blur-[120px] z-0 pointer-events-none opacity-50 bottom-[20%] left-[5%]"></div>
+    <section
+      id="hero"
+      className="relative flex min-h-[100dvh] items-center overflow-hidden pt-24 pb-16"
+    >
+      <Container className="relative">
+        <div className="grid items-center gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
+          {/* ---------------------------------------------------------- Copy */}
+          <div>
+            {/* Availability. A real semantic state, not decoration, so this is
+                the one status indicator the page is allowed. */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-flex items-center gap-2.5 rounded-full border border-hairline bg-surface/70 px-3.5 py-1.5"
+            >
+              <span className="relative flex h-2 w-2" aria-hidden="true">
+                {!reduce ? (
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+                ) : null}
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <span className="text-[0.8125rem] font-medium text-ink-soft">
+                Open to full-time roles
+              </span>
+            </motion.div>
 
-      <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center relative z-10 animate-fade-in">
-        <div className="flex flex-col gap-6">
-          <div className="inline-flex items-center gap-2 bg-tag-bg border border-border-color px-4 py-2 rounded-[30px] w-fit font-heading text-[0.85rem] font-semibold text-color-primary">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span>Available for Full-Time Roles</span>
-          </div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-7 font-display text-[clamp(2.75rem,8.5vw,5.75rem)] font-bold leading-[0.95] tracking-[-0.03em]"
+            >
+              Ashwani
+              <br />
+              <span className="text-accent">Kumar.</span>
+            </motion.h1>
 
-          <h1 className="font-heading text-4xl sm:text-[3.5rem] font-extrabold leading-[1.1] tracking-tight">
-            Hey, I'm <span className="gradient-text">Ashwani Kumar</span>
-          </h1>
+            {/* Role rotator. Grid stack keeps the box at the width of the
+                longest role, so swapping text never reflows the hero. */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.14, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+              className="mt-6 font-display text-xl font-medium text-ink-soft sm:text-2xl"
+            >
+              <span className="sr-only">I ship {SHIPS.join(', ')}.</span>
+              <span className="inline-grid" aria-hidden="true">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={activeShip}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -14 }}
+                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    className="col-start-1 row-start-1"
+                  >
+                    I ship{' '}
+                    <span className="text-ink underline decoration-accent decoration-2 underline-offset-[6px]">
+                      {activeShip}
+                    </span>
+                    .
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+            </motion.div>
 
-          <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-text-secondary">
-            I'm a <span className="text-color-primary">{typedText}</span>
-            <span className="text-color-primary animate-pulse">|</span>
-          </h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-6 max-w-[54ch] text-[1.0625rem] leading-relaxed text-ink-soft"
+            >
+              Shipping SaaS products end to end with React, Node and MongoDB, with an
+              internship at Krafzen Inc. behind it.
+            </motion.p>
 
-          <p className="text-[1.1rem] text-text-secondary max-w-[600px]">
-            Full-Stack Developer specializing in building and maintaining SaaS products with 
-            React, Node.js, Express, and MongoDB. Former Intern at Krafzen Inc. with a proven record of 
-            optimizing UI rendering performance and resolving critical production bugs.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 mt-2">
-            <a href="#projects" className="btn btn-primary flex items-center justify-center gap-2">
-              View Work <ArrowRight size={18} />
-            </a>
-            <button onClick={handleDownloadResume} className="btn btn-secondary flex items-center justify-center gap-2">
-              Download CV <Download size={18} />
-            </button>
-            <a href="#contact" className="btn btn-secondary flex items-center justify-center">
-              Contact Me
-            </a>
-          </div>
-
-          {/* Social Links Row */}
-          <div className="flex gap-4 mt-4">
-            {socialLinks.map((link, idx) => (
-              <a 
-                key={idx} 
-                href={link.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex items-center justify-center w-11 h-11 rounded-full bg-tag-bg border border-border-color text-text-secondary transition-all duration-300 ease-in-out hover:bg-gradient-brand hover:text-bg-primary hover:border-transparent hover:-translate-y-1 no-underline" 
-                aria-label={link.label}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-9 flex flex-wrap items-center gap-3"
+            >
+              <a
+                href="#projects"
+                className="btn-accent btn-accent-hover btn-accent-active"
               >
-                {link.icon}
+                View work
+                <ArrowDownRight size={18} />
               </a>
-            ))}
+              <button
+                type="button"
+                onClick={handleDownloadResume}
+                className="btn-ghost btn-ghost-hover btn-ghost-active"
+              >
+                <Download size={17} />
+                Resume
+              </button>
+            </motion.div>
           </div>
+
+          {/* -------------------------------------------------------- Portrait */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="relative mx-auto w-full max-w-[400px]"
+          >
+            {/* Atmosphere behind the figure. The cutout has no background of
+                its own, so it needs a light source to sit against. */}
+            <div
+              aria-hidden="true"
+              className="absolute left-1/2 top-1/2 -z-10 h-[125%] w-[125%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,var(--accent-wash),transparent_68%)]"
+            />
+
+            {/* Offset accent slab behind the figure. Purely structural: it
+                gives the portrait depth without a drop shadow. */}
+            <div
+              aria-hidden="true"
+              className="absolute -inset-3 rounded-[26px] border border-accent/25"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute -right-2 -bottom-2 h-24 w-24 rounded-[26px] bg-accent/12"
+            />
+
+            <figure>
+              {/* White studio backdrop removed by flood fill, so the portrait
+                  sits directly on the page. 441x513 native, rendered at no
+                  more than 400px wide, so it is never upscaled. */}
+              <picture>
+                <source srcSet={profileWebp} type="image/webp" />
+                <img
+                  src={profileImg}
+                  alt="Ashwani Kumar, full-stack developer"
+                  width={441}
+                  height={513}
+                  fetchPriority="high"
+                  className="h-auto w-full"
+                />
+              </picture>
+              {/* Caption sits outside the frame. No pill, tag or label is
+                  overlaid on the photograph. */}
+              <figcaption className="mt-4 flex items-baseline justify-between gap-4">
+                <p className="font-display text-base font-semibold text-ink">
+                  Ashwani Kumar
+                </p>
+                <p className="font-mono text-xs text-ink-mute">B.Tech CSE, 2026</p>
+              </figcaption>
+            </figure>
+          </motion.div>
         </div>
-
-        {/* Hero Interactive Stats Panel */}
-        <div className="w-full">
-          <div className="glass-card p-8 flex flex-col gap-6 animate-slide-up">
-            <h3 className="font-heading text-[1.25rem] font-bold text-text-primary mb-2 border-b border-border-color pb-3">Development Statistics</h3>
-            
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary shrink-0">
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <p className="font-heading text-[1.2rem] font-bold text-text-primary">540+</p>
-                <p className="text-[0.85rem] text-text-secondary mt-0.5">Coding Problems Solved (GFG & Coding Ninjas)</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary shrink-0">
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <p className="font-heading text-[1.2rem] font-bold text-text-primary">Ex-Intern, Krafzen</p>
-                <p className="text-[0.85rem] text-text-secondary mt-0.5">Internship LOR awarded by CEO Khadija Zain</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary shrink-0">
-                <CheckCircle2 size={24} />
-              </div>
-              <div>
-                <p className="font-heading text-[1.2rem] font-bold text-text-primary">2 SaaS Apps</p>
-                <p className="text-[0.85rem] text-text-secondary mt-0.5">Built & Deployed from scratch to release</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </Container>
     </section>
   );
 }

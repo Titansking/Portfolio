@@ -1,10 +1,46 @@
-import { GraduationCap, BrainCircuit, Lightbulb, MapPin, Download } from 'lucide-react';
-import profileImg from '../../assets/profile.png';
+import { useRef } from 'react';
+import { BrainCircuit, Lightbulb, GraduationCap, Download } from 'lucide-react';
 import { trackResumeDownload } from '../../services/api';
+import { Container, Section, SectionHead, Hairline } from '../ui/Section';
+import { Reveal, RevealList } from '../ui/Reveal';
+import { HoverCard, ScrollLine } from '../ui/Motion';
+
+const EDUCATION = [
+  {
+    years: '2022 to 2026',
+    degree: 'Bachelor of Technology, Computer Science and Engineering',
+    school: 'Rungta College of Engineering and Technology',
+    place: 'Bhilai, Chhattisgarh',
+  },
+  {
+    years: '2020 to 2022',
+    degree: 'Higher Secondary, Class XII',
+    school: 'Sardar Patel Public School',
+    place: 'Bokaro, Jharkhand',
+  },
+];
+
+const INTERESTS = [
+  {
+    icon: BrainCircuit,
+    title: 'Applied ML and IoT',
+    body: 'Wiring machine learning models into devices that are actually deployed.',
+  },
+  {
+    icon: Lightbulb,
+    title: 'System design',
+    body: 'Service boundaries, data modelling, and the trade-offs behind both.',
+  },
+  {
+    icon: GraduationCap,
+    title: 'Keeping current',
+    body: 'Cloud-native tooling, web standards, and what is landing in browsers.',
+  },
+];
 
 export default function About() {
-  const handleDownloadResume = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const educationRef = useRef<HTMLOListElement>(null);
+  const handleDownloadResume = () => {
     trackResumeDownload();
     const link = document.createElement('a');
     link.href = '/resume.pdf';
@@ -14,113 +50,116 @@ export default function About() {
     document.body.removeChild(link);
   };
 
-  const interests = [
-    {
-      icon: <BrainCircuit size={24} />,
-      title: 'Technology Focus',
-      description: 'Interested in Internet of Things (IoT), open-source development, and applying machine learning models.'
-    },
-    {
-      icon: <Lightbulb size={24} />,
-      title: 'Problem Solving & Innovation',
-      description: 'Fascinated by high-level system design, microservices architecture, and agile development processes.'
-    },
-    {
-      icon: <GraduationCap size={24} />,
-      title: 'Continuous Learning',
-      description: 'Actively tracking emerging full-stack tools, web standards, and cloud-native software architectures.'
-    }
-  ];
-
   return (
-    <section id="about" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl font-bold mb-3">About <span className="gradient-text">Me</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Get to know my academic background, technical focus, and areas of interest.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          {/* Column 1: Biography with small profile image embedded */}
-          <div className="glass-card p-10 flex flex-col gap-5">
-            <div className="flex items-center gap-6 border-b border-border-color pb-5">
-              <div className="w-16 h-16 rounded-full overflow-hidden border border-border-color shrink-0">
-                <img src={profileImg} alt="Ashwani Kumar" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <h3 className="font-heading text-xl font-bold text-text-primary">Ashwani Kumar</h3>
-                <p className="text-[0.9rem] text-text-secondary mt-1">Ex-Full-Stack Developer Intern @ Krafzen Inc.</p>
-                <div className="flex items-center gap-1.5 text-xs text-text-muted mt-1">
-                  <MapPin size={16} className="text-color-primary" />
-                  <span>Kolkata, India</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col gap-4 text-text-secondary text-[0.95rem] leading-relaxed">
-              <p>
-                I am pursuing my Bachelor of Technology in Computer Science and Engineering from Rungta College 
-                of Engineering and Technology (2022–2026). My journey into software engineering started with building web applications 
-                and has evolved into architecting scalable SaaS platforms and real-time systems.
-              </p>
-              <p>
-                I thrive in collaborative, fast-paced teams (demonstrated during my remote full-stack developer internship at Krafzen Inc.), 
-                where I engineered full-stack SaaS features, participated in sprint workflows, and resolved architectural bottlenecks.
-              </p>
-              <div className="mt-2">
-                <button onClick={handleDownloadResume} className="btn btn-secondary flex items-center gap-2">
-                  Download Full Resume <Download size={18} />
-                </button>
-              </div>
-            </div>
+    <Section id="about">
+      <Container>
+        <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          {/* Sticky rail. Holds the heading and one action, and stays put
+              while the prose column scrolls past it. */}
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            <Reveal>
+              <SectionHead
+                title={
+                  <>
+                    A developer who
+                    <br />
+                    likes owning
+                    <br />
+                    <span className="text-accent">the whole stack.</span>
+                  </>
+                }
+                lede="Backend, frontend, and the deployment path in between."
+              />
+            </Reveal>
+            <Reveal delay={0.1} className="mt-8">
+              <button
+                type="button"
+                onClick={handleDownloadResume}
+                className="btn-ghost btn-ghost-hover btn-ghost-active"
+              >
+                <Download size={17} />
+                Download Resume
+              </button>
+            </Reveal>
           </div>
 
-          {/* Column 2: Education Timeline */}
-          <div className="glass-card p-10 flex flex-col gap-5">
-            <h3 className="font-heading text-xl font-bold text-text-primary border-b border-border-color pb-3">Academic Journey</h3>
-            
-            <div className="flex flex-col gap-0">
-              <div className="flex gap-6 relative pb-6 border-l-2 border-border-color pl-6 ml-3 last:border-transparent last:pb-0">
-                <div className="absolute left-[-9px] top-1 w-[18px] h-[18px] rounded-full bg-bg-primary border-2 border-color-primary flex items-center justify-center text-color-primary z-10">
-                  <GraduationCap size={10} />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[0.8rem] font-bold text-color-primary">2022 – 2026</span>
-                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">Bachelor of Technology in Computer Science and Engineering</h4>
-                  <p className="text-text-secondary text-[0.95rem]">Rungta College of Engineering and Technology</p>
-                  <p className="text-[0.85rem] text-text-muted">Bhilai, India</p>
-                </div>
+          <div>
+            <Reveal>
+              <div className="space-y-6 text-[1.0625rem] leading-relaxed text-ink-soft">
+                <p>
+                  I am in the final stretch of a B.Tech in Computer Science at Rungta
+                  College of Engineering and Technology, graduating in 2026. I started
+                  out building web pages, and the work has since moved up the stack
+                  into the parts that are harder to reverse: data models, auth
+                  boundaries, and the shape of a service.
+                </p>
+                <p>
+                  Most of that has been learned on live products rather than in
+                  tutorials. My internship at Krafzen Inc. was fully remote, which
+                  meant owning features end to end, writing the tests, and getting
+                  paged when something broke. That is the part of the job I value
+                  most, and the part I am best at.
+                </p>
+                <p>
+                  I am looking for a full-time role on a product team that ships
+                  often and reviews code seriously.
+                </p>
               </div>
+            </Reveal>
 
-              <div className="flex gap-6 relative pb-6 border-l-2 border-border-color pl-6 ml-3 last:border-transparent last:pb-0">
-                <div className="absolute left-[-9px] top-1 w-[18px] h-[18px] rounded-full bg-bg-primary border-2 border-color-primary flex items-center justify-center text-color-primary z-10">
-                  <GraduationCap size={10} />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <span className="text-[0.8rem] font-bold text-color-primary">2020 – 2022</span>
-                  <h4 className="font-heading text-[1.1rem] font-semibold text-text-primary">Higher Secondary Education (Class XII)</h4>
-                  <p className="text-text-secondary text-[0.95rem]">Sardar Patel Public School</p>
-                  <p className="text-[0.85rem] text-text-muted">Bokaro, India</p>
-                </div>
-              </div>
-            </div>
+            <Reveal delay={0.08} className="mt-16">
+              <h3 className="font-display text-2xl font-bold tracking-tight">
+                Education
+              </h3>
+              <Hairline className="mt-5" />
+
+              <ol ref={educationRef} className="relative mt-8 space-y-9 pl-7">
+                {/* The spine fills with accent as the list is scrolled through,
+                    so progress through the education is visible at a glance. */}
+                <ScrollLine target={educationRef} className="inset-y-1 left-[3px]" />
+                {EDUCATION.map((entry) => (
+                  <li key={entry.degree} className="relative">
+                    <span
+                      aria-hidden="true"
+                      className="absolute top-1.5 -left-7 h-[7px] w-[7px] rounded-full bg-accent"
+                    />
+                    <p className="font-mono text-xs tracking-wide text-accent">
+                      {entry.years}
+                    </p>
+                    <h4 className="mt-2 font-display text-lg font-semibold leading-snug text-ink">
+                      {entry.degree}
+                    </h4>
+                    <p className="mt-1 text-ink-soft">{entry.school}</p>
+                    <p className="mt-0.5 text-sm text-ink-mute">{entry.place}</p>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+
+            <Reveal delay={0.08} className="mt-16">
+              <h3 className="font-display text-2xl font-bold tracking-tight">
+                What I chase
+              </h3>
+              <Hairline className="mt-5" />
+
+              {/* Hairline columns rather than three identical cards. */}
+              <RevealList className="grid gap-x-10 gap-y-8 pt-8 sm:grid-cols-3">
+                {INTERESTS.map(({ icon: Icon, title, body }) => (
+                  <HoverCard key={title} stagger>
+                    <Icon size={22} className="text-accent transition-transform duration-300" />
+                    <h4 className="mt-4 font-display text-base font-semibold text-ink">
+                      {title}
+                    </h4>
+                    <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+                      {body}
+                    </p>
+                  </HoverCard>
+                ))}
+              </RevealList>
+            </Reveal>
           </div>
         </div>
-
-        {/* Areas of Interest Rows */}
-        <h3 className="font-heading text-2xl font-bold text-center text-text-primary mb-10">Areas of Interest</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {interests.map((item, index) => (
-            <div key={index} className="glass-card p-8 flex flex-col gap-4 text-center items-center transition-all duration-300 hover:scale-[1.02] hover:border-border-hover">
-              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary">
-                {item.icon}
-              </div>
-              <h4 className="font-heading text-lg font-bold text-text-primary">{item.title}</h4>
-              <p className="text-[0.9rem] text-text-secondary leading-relaxed">{item.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

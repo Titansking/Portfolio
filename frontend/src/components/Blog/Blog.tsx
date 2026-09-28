@@ -1,22 +1,27 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchBlogs } from '../../services/api';
+import { fetchBlogs, type BlogPost } from '../../services/api';
 
 export default function Blog() {
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [selectedPost, setSelectedPost] = useState<any | null>(null);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // The fetch owns its own lifecycle: `active` drops the result if the
+  // component unmounts mid-request, and the state updates land after an await
+  // rather than synchronously inside the effect body.
   useEffect(() => {
-    loadBlogs();
+    let active = true;
+    void (async () => {
+      const list = await fetchBlogs();
+      if (!active) return;
+      setBlogs(list);
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
   }, []);
-
-  const loadBlogs = async () => {
-    setLoading(true);
-    const list = await fetchBlogs();
-    setBlogs(list);
-    setLoading(false);
-  };
 
   if (loading) {
     return (

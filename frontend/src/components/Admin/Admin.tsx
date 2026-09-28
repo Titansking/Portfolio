@@ -10,8 +10,12 @@ import {
   fetchBlogs, 
   createBlog, 
   updateBlog, 
-  deleteBlog,
-  fetchAnalytics
+  deleteBlog, 
+  fetchAnalytics,
+  type Analytics,
+  type BlogPost,
+  type ContactMessage,
+  type Project
 } from '../../services/api';
 
 export default function Admin() {
@@ -21,10 +25,10 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<'messages' | 'projects' | 'blogs' | 'analytics'>('messages');
 
   // Dashboard Data State
-  const [messages, setMessages] = useState<any[]>([]);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [analytics, setAnalytics] = useState<any>(null);
+  const [messages, setMessages] = useState<ContactMessage[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
 
   // Form Editor State
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -35,12 +39,6 @@ export default function Admin() {
     title: '', excerpt: '', content: '', readTime: ''
   });
   const [showForm, setShowForm] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      loadDashboardData();
-    }
-  }, [token]);
 
   const loadDashboardData = async () => {
     if (!token) return;
@@ -55,6 +53,30 @@ export default function Admin() {
     setBlogs(posts);
     setAnalytics(stats);
   };
+
+  // Runs whenever the session token appears. The load itself is kicked off
+  // inside the effect rather than through a synchronous helper call, and the
+  // `active` guard drops the result if the token changes again mid-flight.
+  useEffect(() => {
+    if (!token) return;
+    let active = true;
+    void (async () => {
+      const [msgs, projs, posts, stats] = await Promise.all([
+        fetchContactMessages(token),
+        fetchProjects(),
+        fetchBlogs(),
+        fetchAnalytics()
+      ]);
+      if (!active) return;
+      setMessages(msgs);
+      setProjects(projs);
+      setBlogs(posts);
+      setAnalytics(stats);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [token]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,12 +108,9 @@ export default function Admin() {
       highlights: projectForm.highlights.split('\n').map(h => h.trim()).filter(Boolean)
     };
 
-    let ok = false;
-    if (editingId) {
-      ok = await updateProject(editingId, payload, token);
-    } else {
-      ok = await createProject(payload, token);
-    }
+    const ok = editingId
+      ? await updateProject(editingId, payload, token)
+      : await createProject(payload, token);
 
     if (ok) {
       resetProjectForm();
@@ -101,7 +120,8 @@ export default function Admin() {
     }
   };
 
-  const startEditProject = (p: any) => {
+  const startEditProject = (p: Project) => {
+    if (!p.id) return;
     setEditingId(p.id);
     setProjectForm({
       title: p.title || '',
@@ -121,8 +141,8 @@ export default function Admin() {
     setShowForm(false);
   };
 
-  const handleDeleteProject = async (id: string) => {
-    if (!token || !window.confirm('Delete this project?')) return;
+  const handleDeleteProject = async (id: string | undefined) => {
+    if (!token || !id || !window.confirm('Delete this project?')) return;
     const ok = await deleteProject(id, token);
     if (ok) loadDashboardData();
   };
@@ -134,12 +154,9 @@ export default function Admin() {
     e.preventDefault();
     if (!token) return;
 
-    let ok = false;
-    if (editingId) {
-      ok = await updateBlog(editingId, blogForm, token);
-    } else {
-      ok = await createBlog(blogForm, token);
-    }
+    const ok = editingId
+      ? await updateBlog(editingId, blogForm, token)
+      : await createBlog(blogForm, token);
 
     if (ok) {
       resetBlogForm();
@@ -149,7 +166,8 @@ export default function Admin() {
     }
   };
 
-  const startEditBlog = (b: any) => {
+  const startEditBlog = (b: BlogPost) => {
+    if (!b.id) return;
     setEditingId(b.id);
     setBlogForm({
       title: b.title || '',
@@ -166,8 +184,8 @@ export default function Admin() {
     setShowForm(false);
   };
 
-  const handleDeleteBlog = async (id: string) => {
-    if (!token || !window.confirm('Delete this blog post?')) return;
+  const handleDeleteBlog = async (id: string | undefined) => {
+    if (!token || !id || !window.confirm('Delete this blog post?')) return;
     const ok = await deleteBlog(id, token);
     if (ok) loadDashboardData();
   };
