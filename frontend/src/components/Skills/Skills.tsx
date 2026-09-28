@@ -1,129 +1,204 @@
-import { useState } from 'react';
-import { Terminal, Database, Cpu, Wrench, Sparkles } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Terminal, Database, Wrench, Cpu } from 'lucide-react';
+import { Container, Section, SectionHead, Hairline } from '../ui/Section';
+import { Reveal, RevealList } from '../ui/Reveal';
+import { HoverRow } from '../ui/Motion';
+
+type Level = 'Advanced' | 'Intermediate';
+type Group = 'frontend' | 'backend' | 'tooling' | 'core';
+
+const GROUPS: {
+  id: Group;
+  label: string;
+  icon: typeof Terminal;
+  blurb: string;
+  skills: { name: string; level: Level }[];
+}[] = [
+  {
+    id: 'frontend',
+    label: 'Frontend',
+    icon: Terminal,
+    blurb: 'Languages and UI frameworks used to build fast, accessible interfaces.',
+    skills: [
+      { name: 'TypeScript', level: 'Advanced' },
+      { name: 'React', level: 'Advanced' },
+      { name: 'JavaScript (ES6+)', level: 'Advanced' },
+      { name: 'Tailwind CSS', level: 'Advanced' },
+      { name: 'HTML5', level: 'Advanced' },
+      { name: 'CSS3', level: 'Advanced' },
+      { name: 'Next.js', level: 'Intermediate' },
+      { name: 'Java', level: 'Intermediate' },
+      { name: 'SQL', level: 'Intermediate' },
+      { name: 'shadcn/ui', level: 'Advanced' },
+    ],
+  },
+  {
+    id: 'backend',
+    label: 'Backend & data',
+    icon: Database,
+    blurb: 'Service architecture, API design, and the databases behind them.',
+    skills: [
+      { name: 'Node.js', level: 'Advanced' },
+      { name: 'Express', level: 'Advanced' },
+      { name: 'REST API design', level: 'Advanced' },
+      { name: 'MongoDB', level: 'Advanced' },
+      { name: 'Mongoose', level: 'Advanced' },
+      { name: 'Middleware patterns', level: 'Advanced' },
+      { name: 'Convex', level: 'Advanced' },
+      { name: 'MySQL', level: 'Intermediate' },
+      { name: 'Microservices', level: 'Intermediate' },
+    ],
+  },
+  {
+    id: 'tooling',
+    label: 'Auth & tooling',
+    icon: Wrench,
+    blurb: 'Authentication, version control, and the tools around the code.',
+    skills: [
+      { name: 'JWT', level: 'Advanced' },
+      { name: 'bcrypt', level: 'Advanced' },
+      { name: 'Git', level: 'Advanced' },
+      { name: 'GitHub', level: 'Advanced' },
+      { name: 'Postman', level: 'Advanced' },
+      { name: 'Axios', level: 'Advanced' },
+      { name: 'Linux', level: 'Intermediate' },
+      { name: 'GitLab', level: 'Intermediate' },
+    ],
+  },
+  {
+    id: 'core',
+    label: 'CS foundations',
+    icon: Cpu,
+    blurb: 'The theory work that makes the rest of it easier to reason about.',
+    skills: [
+      { name: 'Data structures & algorithms', level: 'Advanced' },
+      { name: 'Object-oriented programming', level: 'Advanced' },
+      { name: 'Database management systems', level: 'Advanced' },
+      { name: 'Operating systems', level: 'Intermediate' },
+    ],
+  },
+];
 
 export default function Skills() {
-  const [activeTab, setActiveTab] = useState<'languages' | 'databases' | 'tools' | 'core'>('languages');
+  const [active, setActive] = useState<Group>('frontend');
+  const railRef = useRef<HTMLDivElement>(null);
 
-  const categories = [
-    { id: 'languages', label: 'Languages & Frontend', icon: <Terminal size={18} /> },
-    { id: 'databases', label: 'Backend & Databases', icon: <Database size={18} /> },
-    { id: 'tools', label: 'Auth, Tools & DevOps', icon: <Wrench size={18} /> },
-    { id: 'core', label: 'Core CS Competencies', icon: <Cpu size={18} /> },
-  ];
+  const group = GROUPS.find((g) => g.id === active) ?? GROUPS[0];
 
-  const skillsData = {
-    languages: {
-      title: 'Languages & Frontend Development',
-      subtitle: 'Languages and modern UI frameworks I use to build performant, responsive web applications.',
-      skills: [
-        { name: 'TypeScript', level: 'Advanced' },
-        { name: 'JavaScript (ES6+)', level: 'Advanced' },
-        { name: 'Java', level: 'Intermediate' },
-        { name: 'React.js', level: 'Advanced' },
-        { name: 'Next.js', level: 'Intermediate' },
-        { name: 'HTML5', level: 'Advanced' },
-        { name: 'CSS3', level: 'Advanced' },
-        { name: 'SQL', level: 'Intermediate' },
-        { name: 'Tailwind CSS', level: 'Advanced' },
-        { name: 'Shadcn UI', level: 'Advanced' }
-      ]
-    },
-    databases: {
-      title: 'Backend, APIs & Databases',
-      subtitle: 'Server architectures, microservices, RESTful design, and persistent databases.',
-      skills: [
-        { name: 'Node.js', level: 'Advanced' },
-        { name: 'Express.js', level: 'Advanced' },
-        { name: 'RESTful APIs', level: 'Advanced' },
-        { name: 'Middleware Architecture', level: 'Advanced' },
-        { name: 'Microservices', level: 'Intermediate' },
-        { name: 'MongoDB', level: 'Advanced' },
-        { name: 'MySQL', level: 'Intermediate' },
-        { name: 'Convex', level: 'Advanced' },
-        { name: 'Mongoose', level: 'Advanced' }
-      ]
-    },
-    tools: {
-      title: 'Auth, Tools & DevOps',
-      subtitle: 'Authentication workflows, version control, operating systems, and developer tooling.',
-      skills: [
-        { name: 'JWT', level: 'Advanced' },
-        { name: 'Bcrypt', level: 'Advanced' },
-        { name: 'Git', level: 'Advanced' },
-        { name: 'GitHub', level: 'Advanced' },
-        { name: 'GitLab', level: 'Intermediate' },
-        { name: 'Linux', level: 'Intermediate' },
-        { name: 'VS Code', level: 'Advanced' },
-        { name: 'Postman', level: 'Advanced' },
-        { name: 'Axios', level: 'Advanced' }
-      ]
-    },
-    core: {
-      title: 'Core Computer Science Competencies',
-      subtitle: 'Fundamental engineering principles and core CS topics driving structured problem-solving.',
-      skills: [
-        { name: 'Data Structures & Algorithms (DSA)', level: 'Advanced' },
-        { name: 'Object-Oriented Programming (OOP)', level: 'Advanced' },
-        { name: 'Database Management Systems (DBMS)', level: 'Advanced' },
-        { name: 'Operating Systems', level: 'Intermediate' }
-      ]
-    }
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const keys = ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+
+    const i = GROUPS.findIndex((g) => g.id === active);
+    let next = i;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % GROUPS.length;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft')
+      next = (i - 1 + GROUPS.length) % GROUPS.length;
+    if (e.key === 'Home') next = 0;
+    if (e.key === 'End') next = GROUPS.length - 1;
+
+    setActive(GROUPS[next].id);
+    railRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
   };
 
-  const activeCategory = skillsData[activeTab];
-
   return (
-    <section id="skills" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl font-bold mb-3">Technical <span className="gradient-text">Skills</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Structured technical skillset matching production SaaS and real-time development experience.</p>
-        </div>
+    <Section id="skills" className="border-t border-hairline">
+      <Container>
+        <Reveal>
+          <SectionHead
+            title={
+              <>
+                The toolkit I
+                <br />
+                reach for <span className="text-accent">by default.</span>
+              </>
+            }
+          />
+        </Reveal>
 
-        {/* Tab Selection Row */}
-        <div className="flex flex-wrap gap-4 mb-10 justify-center">
-          {categories.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`glass-card flex items-center gap-2 px-6 py-3 cursor-pointer text-text-secondary transition-all duration-300 font-heading font-medium hover:text-color-primary ${
-                activeTab === tab.id 
-                  ? '!bg-gradient-brand !text-white font-bold shadow-[0_4px_15px_rgba(5,150,105,0.25)] border-transparent' 
-                  : 'hover:bg-border-color'
-              }`}
+        {/* grid-cols-1 is minmax(0,1fr), not the implicit `auto` track. An auto
+            track is sized to max-content, so the 60ch paragraph below would
+            force the column wider than the viewport on small screens. */}
+        <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16">
+          {/* Vertical rail. A real tablist: arrow keys, Home and End move
+              between tabs, per the WAI-ARIA tabs pattern. */}
+          <Reveal>
+            <div
+              ref={railRef}
+              role="tablist"
+              aria-label="Skill categories"
+              aria-orientation="vertical"
+              onKeyDown={onKeyDown}
+              className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:gap-0 lg:overflow-visible lg:pb-0"
             >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Dynamic Skill Showcase */}
-        <div className="glass-card p-10 flex flex-col gap-8">
-          <div className="flex justify-between items-center border-b border-border-color pb-6 gap-4">
-            <div>
-              <h3 className="font-heading text-2xl font-bold text-text-primary">{activeCategory.title}</h3>
-              <p className="text-[0.95rem] text-text-secondary mt-1 max-w-[700px]">{activeCategory.subtitle}</p>
+              {GROUPS.map((g) => {
+                const selected = g.id === active;
+                return (
+                  <button
+                    key={g.id}
+                    role="tab"
+                    id={`tab-${g.id}`}
+                    aria-selected={selected}
+                    aria-controls={`panel-${g.id}`}
+                    tabIndex={selected ? 0 : -1}
+                    onClick={() => setActive(g.id)}
+                    className={`flex shrink-0 items-center gap-3 rounded-[10px] px-4 py-3 text-left font-display text-[0.9375rem] font-medium whitespace-nowrap transition-colors duration-200 lg:rounded-none lg:rounded-r-[10px] lg:border-r lg:py-4 ${
+                      selected
+                        ? 'bg-accent-wash text-accent lg:border-accent'
+                        : 'text-ink-soft hover:bg-elevated hover:text-ink lg:border-hairline'
+                    }`}
+                  >
+                    <g.icon size={17} className="shrink-0" />
+                    {g.label}
+                  </button>
+                );
+              })}
             </div>
-            <Sparkles className="text-color-primary shrink-0" size={24} />
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {activeCategory.skills.map((skill, index) => (
-              <div key={index} className="glass-card p-5 flex justify-between items-center transition-all duration-300 hover:-translate-y-1 hover:border-border-hover">
-                <span className="font-heading font-semibold text-text-primary text-[1.05rem]">{skill.name}</span>
-                <span className={`text-[0.75rem] font-bold px-2.5 py-1 rounded-[12px] bg-tag-bg border ${
-                  skill.level.toLowerCase() === 'advanced' 
-                    ? 'border-color-primary text-color-primary' 
-                    : 'border-color-accent text-color-accent'
-                }`}>
-                  {skill.level}
-                </span>
-              </div>
-            ))}
+          <div
+            role="tabpanel"
+            id={`panel-${group.id}`}
+            aria-labelledby={`tab-${group.id}`}
+            tabIndex={0}
+            className="min-w-0 focus-visible:outline-none"
+          >
+            <p className="max-w-[60ch] text-lg leading-relaxed text-ink-soft">
+              {group.blurb}
+            </p>
+            <Hairline className="mt-8" />
+
+            {/* Two-column split with hairline separation. Deliberately not a
+                stack of identical cards, and no proficiency bars.
+                Row keys change per tab, so the stagger replays on every
+                category switch rather than only on first paint. */}
+            <RevealList>
+              <ul className="grid sm:grid-cols-2">
+                {group.skills.map((skill) => (
+                  <HoverRow
+                    key={skill.name}
+                    stagger
+                    lift={2}
+                    className="flex items-baseline justify-between gap-4 border-b border-hairline py-4 sm:odd:pr-8 sm:even:border-l sm:even:border-l-hairline sm:even:pl-8"
+                  >
+                    <span className="font-display text-[0.9375rem] font-medium text-ink">
+                      {skill.name}
+                    </span>
+                    <span
+                      className={`shrink-0 font-mono text-[0.75rem] tracking-wider uppercase ${
+                        skill.level === 'Advanced' ? 'text-accent' : 'text-ink-mute'
+                      }`}
+                    >
+                      {skill.level}
+                    </span>
+                  </HoverRow>
+                ))}
+              </ul>
+            </RevealList>
           </div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

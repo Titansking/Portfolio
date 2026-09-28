@@ -1,156 +1,252 @@
 import { useState } from 'react';
-import { ExternalLink, ChevronDown, ChevronUp, Layers, Users, ShieldCheck } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { SPRING } from '../ui/motionPresets';
+import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { getMark, GITHUB_MARK } from '../../lib/techIcons';
+import { Container, Section, SectionHead } from '../ui/Section';
+import { Reveal } from '../ui/Reveal';
 
-const GithubIcon = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-    <path d="M9 18c-4.51 2-5-2-7-2"></path>
-  </svg>
-);
+type Highlight = { title: string; body: string };
 
-export default function Projects() {
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+type Project = {
+  id: string;
+  title: string;
+  kind: string;
+  summary: string;
+  tech: string[];
+  repo: string;
+  demo: string | null;
+  highlights: Highlight[];
+};
 
-  const projects = [
-    {
-      id: 'gdocs',
-      title: 'Google Docs Clone',
-      subtitle: 'Real-time Collaborative Document Editor',
-      description: 'A collaborative real-time text document workspace supporting concurrent multi-user editing, live presence sync, and multi-format export capabilities.',
-      tech: ['React.js', 'TypeScript', 'Convex', 'Clerk', 'Liveblocks'],
-      github: 'https://github.com/Titansking',
-      demo: '#',
-      highlights: [
-        'Real-Time Workspace: Built a real-time collaborative document workspace supporting concurrent sessions for up to 50 active users with low-latency state synchronization (<50ms).',
-        'Presence & RBAC: Integrated Liveblocks WebSocket pipelines for live presence and cursor tracking, implementing Clerk for secure role-based access control (RBAC).',
-        'Rich-Text Editing: Implemented dynamic rich-text editing controls, structured tables, asset uploads, and multi-format document exporting (PDF, HTML, TXT, JSON).'
-      ],
-      icon: <Users size={24} />
-    },
-    {
-      id: 'taskflow',
-      title: 'Task Flow',
-      subtitle: 'Project Management Platform',
-      description: 'A high-throughput Kanban project management platform designed for agile teams, featuring stateless auth guards and cross-device responsiveness.',
-      tech: ['React.js', 'Node.js', 'Express.js', 'TypeScript', 'MongoDB', 'Tailwind CSS'],
-      github: 'https://github.com/Titansking',
-      demo: 'https://task-flow-ivory-five.vercel.app/',
-      highlights: [
-        'High-Throughput REST API: Designed a high-throughput REST API with an optimized MongoDB schema, handling 200+ requests per minute under concurrent load.',
-        'Responsive Kanban Dashboard: Constructed a cross-device responsive Kanban dashboard using TypeScript to eliminate runtime bugs and standardize end-to-end data schemas.',
-        'Stateless JWT Security: Secured endpoints using stateless JWT session management and Bcrypt hashing, protecting state mutation routes with custom auth guards.'
-      ],
-      icon: <Layers size={24} />
-    }
-  ];
+const PROJECTS: Project[] = [
+  {
+    id: 'gdocs',
+    title: 'Google Docs Clone',
+    kind: 'Real-time collaborative editor',
+    summary:
+      'A shared document workspace where many people edit the same page at once, with live cursors and export to the usual formats.',
+    tech: ['React.js', 'TypeScript', 'Convex', 'Clerk', 'Liveblocks'],
+    repo: 'https://github.com/Titansking',
+    demo: null,
+    highlights: [
+      {
+        title: 'Concurrency',
+        body: 'State stays in sync across up to 50 simultaneous editors with propagation held under 50ms.',
+      },
+      {
+        title: 'Presence and access',
+        body: 'Liveblocks WebSocket pipelines carry presence and cursor position, with Clerk handling role-based access on every document route.',
+      },
+      {
+        title: 'Editing surface',
+        body: 'Rich-text controls, structured tables, asset uploads, and export to PDF, HTML, TXT or JSON.',
+      },
+    ],
+  },
+  {
+    id: 'taskflow',
+    title: 'Task Flow',
+    kind: 'Kanban project management',
+    summary:
+      'A board-based project tool for agile teams, built around a stateless API and a dashboard that holds up on a phone.',
+    tech: ['React.js', 'Node.js', 'Express', 'TypeScript', 'MongoDB', 'Tailwind CSS'],
+    repo: 'https://github.com/Titansking',
+    demo: 'https://task-flow-ivory-five.vercel.app/',
+    highlights: [
+      {
+        title: 'Throughput',
+        body: 'A REST API over an indexed MongoDB schema that holds 200+ requests per minute under concurrent load.',
+      },
+      {
+        title: 'Type safety',
+        body: 'TypeScript end to end, which removed the runtime bugs that used to come from mismatched data shapes.',
+      },
+      {
+        title: 'Session handling',
+        body: 'Stateless JWT sessions with bcrypt hashing, plus route guards on every state-mutating endpoint.',
+      },
+    ],
+  },
+];
 
-  const toggleExpand = (id: string) => {
-    setExpandedProject(prev => prev === id ? null : id);
-  };
+function TechRow({ names }: { names: string[] }) {
+  return (
+    <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      {names.map((name) => {
+        const mark = getMark(name);
+        return (
+          <li
+            key={name}
+            className="flex items-center gap-2 text-ink-mute transition-colors duration-200 hover:text-ink"
+          >
+            {mark ? (
+              <svg
+                viewBox="0 0 24 24"
+                width={17}
+                height={17}
+                fill="currentColor"
+                role="img"
+                aria-label={mark.title}
+              >
+                <path d={mark.path} />
+              </svg>
+            ) : (
+              <span
+                aria-hidden="true"
+                className="inline-block h-1.5 w-1.5 rounded-full bg-current"
+              />
+            )}
+            <span className="font-mono text-[0.8125rem] whitespace-nowrap">{name}</span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function ProjectCell({ project, wide }: { project: Project; wide: boolean }) {
+  const [open, setOpen] = useState(false);
+  const reduce = useReducedMotion();
+  const panelId = `panel-${project.id}`;
 
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl font-bold mb-3">Featured <span className="gradient-text">Projects</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">A closer look at flagship SaaS architectures and collaborative tools built from design to code.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {projects.map((project) => {
-            const isExpanded = expandedProject === project.id;
-            return (
-              <div 
-                key={project.id} 
-                className={`glass-card p-8 flex flex-col gap-6 transition-all duration-300 hover:scale-[1.01] hover:border-border-hover ${
-                  isExpanded ? 'border-color-primary/30 shadow-[0_12px_40px_rgba(0,0,0,0.45)]' : ''
-                }`}
-              >
-                {/* Visual Header */}
-                <div className="flex justify-between items-center mb-2">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary flex items-center justify-center">
-                    {project.icon}
-                  </div>
-                  <div className="flex gap-3">
-                    <a 
-                      href={project.github} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="w-10 h-10 rounded-full bg-tag-bg border border-border-color text-text-secondary flex items-center justify-center hover:bg-gradient-brand hover:text-bg-primary hover:border-transparent transition-all duration-300"
-                      aria-label="View Source Code"
-                    >
-                      <GithubIcon />
-                    </a>
-                    {project.demo && project.demo !== '#' ? (
-                      <a 
-                        href={project.demo} 
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 rounded-full bg-tag-bg border border-border-color text-text-secondary flex items-center justify-center hover:bg-gradient-brand hover:text-bg-primary hover:border-transparent transition-all duration-300"
-                        aria-label="View Live Project"
-                      >
-                        <ExternalLink size={18} />
-                      </a>
-                    ) : (
-                      <span 
-                        className="w-10 h-10 rounded-full bg-tag-bg/30 border border-border-color/30 text-text-muted flex items-center justify-center cursor-not-allowed"
-                        title="Live Demo coming soon"
-                      >
-                        <ExternalLink size={18} className="opacity-40" />
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Info Text */}
-                <div className="flex flex-col gap-4">
-                  <span className="text-xs font-bold text-color-primary uppercase tracking-wider">{project.subtitle}</span>
-                  <h3 className="font-heading text-2xl font-bold text-text-primary">{project.title}</h3>
-                  <p className="text-[0.95rem] text-text-secondary leading-relaxed">{project.description}</p>
-
-                  {/* Tech badges */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.tech.map((t) => (
-                      <span key={t} className="px-3 py-1.5 bg-tag-bg border border-border-color rounded-[20px] text-color-primary text-xs font-semibold">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Expander Button */}
-                  <button 
-                    onClick={() => toggleExpand(project.id)} 
-                    className="btn btn-secondary w-full mt-2 py-3 flex justify-center items-center gap-2 text-sm"
-                  >
-                    <span>{isExpanded ? 'Hide Technical Highlights' : 'Show Technical Highlights'}</span>
-                    {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </button>
-
-                  {/* Expanding Section */}
-                  {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-border-color flex flex-col gap-3 animate-slide-up">
-                      <h4 className="font-heading text-[1rem] font-bold text-text-primary">Technical Highlights</h4>
-                      <ul className="flex flex-col gap-3">
-                        {project.highlights.map((h, i) => {
-                          const [title, desc] = h.split(': ');
-                          return (
-                            <li key={i} className="flex items-start gap-3 text-[0.9rem] text-text-secondary leading-relaxed">
-                              <ShieldCheck size={16} className="text-color-primary shrink-0 mt-0.5" />
-                              <div>
-                                <strong>{title}:</strong> {desc}
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+    <motion.article
+      className={`group flex flex-col rounded-[18px] border border-hairline bg-surface p-7 transition-colors duration-300 hover:border-hairline-strong sm:p-9 ${
+        wide ? 'lg:p-11' : ''
+      }`}
+      initial={false}
+      whileHover={reduce ? undefined : { y: -5 }}
+      whileTap={reduce ? undefined : { y: -1, scale: 0.997 }}
+      transition={SPRING}
+    >
+      <div className="flex items-start justify-between gap-6">
+        <h3
+          className={`font-display font-bold tracking-tight ${
+            wide ? 'text-3xl sm:text-[2.5rem]' : 'text-2xl sm:text-3xl'
+          }`}
+        >
+          {project.title}
+        </h3>
+        <div className="flex shrink-0 items-center gap-2">
+          <a
+            href={project.repo}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${project.title} source on GitHub`}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+          >
+            <svg viewBox="0 0 24 24" width={17} height={17} fill="currentColor" aria-hidden="true">
+              <path d={GITHUB_MARK.path} />
+            </svg>
+          </a>
+          {project.demo ? (
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.title} live site`}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+            >
+              <ArrowUpRight size={17} />
+            </a>
+          ) : null}
         </div>
       </div>
-    </section>
+
+      <p className="mt-3 font-mono text-[0.8125rem] text-accent">{project.kind}</p>
+
+      <p
+        className={`mt-6 leading-relaxed text-ink-soft ${
+          wide ? 'max-w-[54ch] text-[1.0625rem]' : 'max-w-[46ch]'
+        }`}
+      >
+        {project.summary}
+      </p>
+
+      <div className="mt-8">
+        <TechRow names={project.tech} />
+      </div>
+
+      <div className="mt-auto pt-9">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className="flex cursor-pointer items-center gap-2 font-display text-[0.9375rem] font-semibold text-ink transition-colors duration-200 hover:text-accent"
+        >
+          {open ? 'Hide' : 'Read'} technical detail
+          <ChevronDown
+            size={16}
+            className={`transition-transform duration-300 ${
+              open ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+
+        <AnimatePresence initial={false}>
+          {open ? (
+            <motion.div
+              id={panelId}
+              key="detail"
+              initial={reduce ? false : { height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={reduce ? { opacity: 0 } : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <ul className="mt-6 space-y-5 border-t border-hairline pt-6">
+                {project.highlights.map((h) => (
+                  <li key={h.title} className="flex gap-5">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                    <div>
+                      <p className="font-display text-[0.9375rem] font-semibold text-ink">
+                        {h.title}
+                      </p>
+                      <p className="mt-1 text-[0.9375rem] leading-relaxed text-ink-soft">
+                        {h.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </motion.article>
+  );
+}
+
+export default function Projects() {
+  return (
+    <Section id="projects" className="border-t border-hairline">
+      <Container>
+        <Reveal>
+          <SectionHead
+            title={
+              <>
+                Two products,
+                <br />
+                <span className="text-accent">built and released.</span>
+              </>
+            }
+            lede="Both shipped from an empty repository to a live URL, which is the part I care about most."
+          />
+        </Reveal>
+
+        {/* Exactly two projects, so exactly two cells. Unequal columns give the
+            pair a rhythm instead of a mirrored 50/50. */}
+        <div className="mt-14 grid items-start gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <Reveal>
+            <ProjectCell project={PROJECTS[0]} wide />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <ProjectCell project={PROJECTS[1]} wide={false} />
+          </Reveal>
+        </div>
+      </Container>
+    </Section>
   );
 }

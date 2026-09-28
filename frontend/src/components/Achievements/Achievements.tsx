@@ -1,101 +1,127 @@
-import { Award, Code2, GitMerge, CheckCircle2 } from 'lucide-react';
+import { Container, Section, SectionHead, Hairline } from '../ui/Section';
+import { Reveal, RevealList, RevealItem } from '../ui/Reveal';
+import { CountUp } from '../ui/CountUp';
+import { HoverRow } from '../ui/Motion';
+
+const LEDGER = [
+  {
+    value: 400,
+    suffix: '+',
+    label: 'Coding Ninjas',
+    detail: 'Recursion, trees and dynamic programming, mostly in Java.',
+  },
+  {
+    value: 160,
+    suffix: '+',
+    label: 'GeeksforGeeks',
+    detail: 'Arrays, searching, sorting, and system design problems.',
+  },
+  { value: 4, suffix: '', label: 'Hacktoberfest PRs', detail: 'Merged in 2023, with a tree planted via Tree-Nation.' },
+];
+
+const CERTS = [
+  {
+    title: 'Data Structures & Algorithms',
+    issuer: 'Coding Ninjas',
+    body: 'Problem-solving mastery across the core algorithms and structures.',
+  },
+  {
+    title: 'Full-Stack Web Development',
+    issuer: '30 Days Coding',
+    body: 'Frontend frameworks, REST API design, and database architecture.',
+  },
+  {
+    title: 'Java Programming',
+    issuer: 'Oracle',
+    body: 'Object-oriented design, data structures, and exception handling.',
+  },
+  {
+    title: 'Open Source Contribution',
+    issuer: 'Hacktoberfest 2023',
+    body: 'Four merged pull requests, recognised with a community tree.',
+  },
+];
 
 export default function Achievements() {
-  const stats = [
-    {
-      icon: <Code2 size={24} />,
-      value: '400+',
-      label: 'Coding Ninjas Problems',
-      detail: 'Solved mostly in Java, focusing on complex recursion, trees, and dynamic programming.'
-    },
-    {
-      icon: <Code2 size={24} />,
-      value: '160+',
-      label: 'GeeksforGeeks Problems',
-      detail: 'Data structure challenges covering arrays, search, sorting algorithms, and system designs.'
-    },
-    {
-      icon: <GitMerge size={24} />,
-      value: '4 PRs',
-      label: 'Hacktoberfest 2023',
-      detail: 'Accepted open-source contributions. Received digital credentials and a tree planted via Tree-Nation.'
-    }
-  ];
-
-  const certifications = [
-    {
-      title: 'Data Structures & Algorithms',
-      issuer: 'Coding Ninjas',
-      description: 'Comprehensive course and problem-solving mastery focusing on core algorithms and data structures.'
-    },
-    {
-      title: 'Full-Stack Web Development',
-      issuer: '30 Days Coding',
-      description: 'Full-stack engineering covering modern frontend frameworks, RESTful APIs, and database architectures.'
-    },
-    {
-      title: 'Java Programming',
-      issuer: 'Oracle',
-      description: 'Object-oriented programming, data structures, exception handling, and core Java engineering fundamentals.'
-    },
-    {
-      title: 'Open Source Contribution',
-      issuer: 'Hacktoberfest 2023 & Tree-Nation',
-      description: 'Merged 4 pull requests during Hacktoberfest; recognized with an official community tree planted via Tree-Nation.'
-    }
-  ];
-
   return (
-    <section id="achievements" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl font-bold mb-3">Achievements & <span className="gradient-text">Certifications</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">Verified certificates, coding statistics, and letter of recommendation from my journey.</p>
-        </div>
+    <Section id="achievements" className="border-t border-hairline">
+      <Container>
+        <Reveal>
+          <SectionHead
+            title={
+              <>
+                Practice, and the
+                <br />
+                <span className="text-accent">paperwork that came with it.</span>
+              </>
+            }
+          />
+        </Reveal>
 
-        {/* Featured Recommendation Quote */}
-        <div className="glass-card max-w-4xl mx-auto p-10 text-center flex flex-col gap-6 items-center mb-16 relative overflow-hidden">
-          <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-color-primary flex items-center justify-center">
-            <Award size={32} />
-          </div>
-          <blockquote className="font-heading text-lg sm:text-xl italic font-medium text-text-primary leading-relaxed max-w-[700px]">
-            "Commended for technical execution, ownership, and reliability across our core full-stack platforms."
-          </blockquote>
-          <div className="flex flex-col gap-1">
-            <span className="font-heading font-bold text-text-primary text-[1.1rem]">Khadija Zain</span>
-            <span className="text-xs text-text-muted font-medium">CEO, Krafzen Inc.</span>
-          </div>
-        </div>
+        {/* Recommendation, full-bleed. Italic display type needs
+            leading-[1.3] plus bottom padding or the descenders in
+            "reliability" clip. */}
+        <Reveal delay={0.08} className="mt-14">
+          <figure className="rounded-[18px] border border-hairline bg-surface px-7 py-12 sm:px-14 sm:py-16">
+            <blockquote className="max-w-[52ch] font-display text-xl font-medium italic leading-[1.3] pb-2 text-ink sm:text-[1.75rem] sm:leading-[1.3]">
+              &ldquo;Commended for technical execution, ownership, and reliability
+              across our core full-stack platforms.&rdquo;
+            </blockquote>
+            <figcaption className="mt-8 flex flex-col gap-1">
+              <span className="font-display font-semibold text-ink">Khadija Zain</span>
+              <span className="text-sm text-ink-mute">CEO, Krafzen Inc.</span>
+            </figcaption>
+          </figure>
+        </Reveal>
 
-        {/* Numeric coding stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {stats.map((stat, idx) => (
-            <div key={idx} className="glass-card p-8 flex flex-col gap-4 text-center items-center transition-all duration-300 hover:scale-[1.02] hover:border-border-hover">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary flex items-center justify-center">
-                {stat.icon}
-              </div>
-              <div className="font-heading text-3xl font-extrabold text-text-primary">{stat.value}</div>
-              <div className="font-heading font-semibold text-[1.1rem] text-text-secondary">{stat.label}</div>
-              <p className="text-[0.85rem] text-text-muted leading-relaxed">{stat.detail}</p>
-            </div>
+        {/* Ledger. A horizontal rule-separated row, not three equal cards. */}
+        <RevealList className="mt-16 grid divide-y divide-hairline sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {LEDGER.map((stat) => (
+            <RevealItem
+              key={stat.label}
+              className="py-8 sm:px-8 sm:py-0 first:sm:pl-0 last:sm:pr-0"
+            >
+              <p className="font-display text-[3.5rem] font-bold leading-none tracking-tight text-accent">
+                <CountUp value={stat.value} suffix={stat.suffix} />
+              </p>
+              <p className="mt-4 font-display font-semibold text-ink">{stat.label}</p>
+              <p className="mt-1.5 max-w-[34ch] text-sm leading-relaxed text-ink-mute">
+                {stat.detail}
+              </p>
+            </RevealItem>
           ))}
-        </div>
+        </RevealList>
 
-        {/* Certifications Grid */}
-        <h3 className="font-heading text-2xl font-bold text-center text-text-primary mb-10">Verified Certifications</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {certifications.map((cert, index) => (
-            <div key={index} className="glass-card p-8 flex flex-col gap-4 transition-all duration-300 hover:-translate-y-1 hover:border-border-hover">
-              <div className="flex items-center gap-2 text-text-muted text-xs">
-                <CheckCircle2 className="text-color-primary shrink-0" size={20} />
-                <span className="font-semibold text-color-primary">{cert.issuer}</span>
-              </div>
-              <h4 className="font-heading text-lg font-bold text-text-primary">{cert.title}</h4>
-              <p className="text-[0.9rem] text-text-secondary leading-relaxed">{cert.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+        <Reveal delay={0.08} className="mt-20">
+          <h3 className="font-display text-2xl font-bold tracking-tight">Certificates</h3>
+          <Hairline className="mt-5" />
+
+          {/* Staggered on scroll, and each row lifts on hover with the issuer
+              label brightening, so the list reads as a set of cards rather
+              than a wall of static text. */}
+          <RevealList className="mt-8">
+            <ul className="grid sm:grid-cols-2">
+              {CERTS.map((cert) => (
+                <HoverRow
+                  key={cert.title}
+                  stagger
+                  className="border-b border-hairline py-7 sm:odd:pr-10 sm:even:border-l sm:even:border-l-hairline sm:even:pl-10"
+                >
+                  <p className="font-mono text-[0.75rem] tracking-[0.16em] text-accent uppercase">
+                    {cert.issuer}
+                  </p>
+                  <h4 className="mt-2.5 font-display text-lg font-semibold text-ink">
+                    {cert.title}
+                  </h4>
+                  <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-soft">
+                    {cert.body}
+                  </p>
+                </HoverRow>
+              ))}
+            </ul>
+          </RevealList>
+        </Reveal>
+      </Container>
+    </Section>
   );
 }

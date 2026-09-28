@@ -1,289 +1,427 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+/* ==========================================================================
+   DESIGN SYSTEM - "Dark Terminal"
+   Dials: DESIGN_VARIANCE 7 / MOTION_INTENSITY 7 / VISUAL_DENSITY 3
+
+   LOCKS (per taste-skill 4.2 / 4.4 / 4.11):
+   - ONE accent: emerald. Used identically on every surface, both modes.
+   - ONE radius scale: surface 18px / control 10px / pill 999px. Never mixed.
+   - ONE theme at a time. Dark is the default and the designed-for direction.
+     Light is a lockstep token inversion, not a per-section flip.
+   ========================================================================== */
+
 @theme {
-  --color-bg-primary: var(--bg-primary);
-  --color-bg-secondary: var(--bg-secondary);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-color-primary: var(--color-primary);
-  --color-color-secondary: var(--color-secondary);
-  --color-color-accent: var(--color-accent);
-  --color-border-color: var(--border-color);
-  --color-border-hover: var(--border-hover);
-  --color-glass-bg: var(--glass-bg);
-  --color-tag-bg: var(--tag-bg);
-  
-  --background-image-gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  --background-image-gradient-accent: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-accent) 100%);
+  /* --- Surfaces ------------------------------------------------------- */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-elevated: var(--elevated);
 
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  
-  --animate-fade-in: fadeIn 0.8s ease-out forwards;
-  --animate-slide-up: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  /* --- Ink (text) ----------------------------------------------------- */
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+
+  /* --- Accent (singular) ---------------------------------------------- */
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+
+  /* Status */
+  --color-danger: var(--danger);
+  --color-danger-wash: var(--danger-wash);
+
+  /* --- Hairlines ------------------------------------------------------ */
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+
+  /* --- Type ----------------------------------------------------------- */
+  --font-sans: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* --- Radius (single documented scale) ------------------------------- */
+  --radius-surface: 18px;
+  --radius-control: 10px;
+
+  /* --- Motion --------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-marquee: marquee 44s linear infinite;
+  --animate-marquee-rev: marquee-rev 44s linear infinite;
+  --animate-caret: caret 1.05s steps(1) infinite;
+  --animate-drift: drift 18s ease-in-out infinite;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes marquee-rev {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+@keyframes caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -18px, 0) scale(1.06); }
 }
 
 :root {
-  --color-bg-primary: #060907;
-  --color-bg-secondary: #0c1410;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted: #94a3b8;
-  --color-color-primary: #10b981;
-  --color-color-secondary: #059669;
-  --color-color-accent: #34d399;
-  --color-border-color: rgba(16, 185, 129, 0.14);
-  --color-border-hover: rgba(16, 185, 129, 0.35);
-  --color-glass-bg: rgba(12, 20, 16, 0.82);
-  --color-tag-bg: rgba(16, 185, 129, 0.08);
+  /* Dark is the default. Every value below is contrast-checked against
+     --canvas (#0A0A0C) for WCAG AA. */
+  --canvas: #0a0a0c;
+  --surface: #101014;
+  --elevated: #16161b;
 
-  --bg-primary: #060907;
-  --bg-secondary: #0c1410;
-  --bg-gradient: radial-gradient(circle at 50% 0%, #0d1e16 0%, #060907 70%);
-  --text-primary: #ffffff;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --color-primary: #10b981;
-  --color-secondary: #059669;
-  --color-accent: #34d399;
-  --border-color: rgba(16, 185, 129, 0.14);
-  --border-hover: rgba(16, 185, 129, 0.35);
-  --glass-bg: rgba(12, 20, 16, 0.82);
-  --glass-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.65);
-  --tag-bg: rgba(16, 185, 129, 0.08);
-  --input-bg: rgba(255, 255, 255, 0.03);
+  --ink: #fafafa;        /* 18.4:1 */
+  --ink-soft: #b4b4bd;   /*  9.6:1 */
+  --ink-mute: #8a8a94;   /*  5.8:1  <- AA for body */
+
+  --accent: #10b981;
+  --accent-dim: #059669;
+  --accent-ink: #04120c; /* text ON accent: 6.9:1 (white would fail at 2.7:1) */
+  --accent-wash: rgba(16, 185, 129, 0.1);
+
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
+
+  /* red-400 clears AA on near-black but fails on white; the light theme
+     swaps in a darker red below. One token, contrast-correct in both. */
+  --danger: #f87171;
+  --danger-wash: rgba(248, 113, 113, 0.12);
+
+  --ambient-a: rgba(16, 185, 129, 0.16);
+  --ambient-b: rgba(16, 185, 129, 0.07);
+  --grain-opacity: 0.028;
+  --grid-line: rgba(255, 255, 255, 0.028);
 }
 
-html.light,
-body.light {
-  --color-bg-primary: #f6fbf8;
-  --color-bg-secondary: #ffffff;
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #334155;
-  --color-text-muted: #64748b;
-  --color-color-primary: #059669;
-  --color-color-secondary: #047857;
-  --color-color-accent: #10b981;
-  --color-border-color: rgba(5, 150, 105, 0.18);
-  --color-border-hover: rgba(5, 150, 105, 0.4);
-  --color-glass-bg: rgba(255, 255, 255, 0.92);
-  --color-tag-bg: rgba(5, 150, 105, 0.08);
+html.light {
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --elevated: #f4f4f5;
 
-  --bg-primary: #f6fbf8;
-  --bg-secondary: #ffffff;
-  --bg-gradient: radial-gradient(circle at 50% 0%, #e8f7ee 0%, #f6fbf8 75%);
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --color-primary: #059669;
-  --color-secondary: #047857;
-  --color-accent: #10b981;
-  --border-color: rgba(5, 150, 105, 0.18);
-  --border-hover: rgba(5, 150, 105, 0.4);
-  --glass-bg: rgba(255, 255, 255, 0.92);
-  --glass-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
-  --tag-bg: rgba(5, 150, 105, 0.08);
-  --input-bg: #ffffff;
+  --ink: #09090b;
+  --ink-soft: #3f3f46;
+  --ink-mute: #5f5f68;   /* 6.1:1 on #FAFAFA */
+
+  --accent: #047857;     /* darkened for AA on light */
+  --accent-dim: #065f46;
+  --accent-ink: #ffffff; /* 5.2:1 on #047857 */
+  --accent-wash: rgba(4, 120, 87, 0.08);
+
+  --hairline: rgba(9, 9, 11, 0.11);
+  --hairline-strong: rgba(9, 9, 11, 0.24);
+
+  --danger: #b91c1c;
+  --danger-wash: rgba(185, 28, 28, 0.08);
+
+  --ambient-a: rgba(4, 120, 87, 0.1);
+  --ambient-b: rgba(4, 120, 87, 0.05);
+  --grain-opacity: 0.02;
+  --grid-line: rgba(9, 9, 11, 0.03);
 }
 
-/* Explicit class color guarantees for light and dark modes */
-body.light {
-  color: #334155;
+/* ==========================================================================
+   LEGACY TOKEN BRIDGE
+   The Admin console and Blog subpages still reference the pre-redesign
+   token names. They resolve to the SAME variables above, so the palette
+   stays locked to one accent. New code must use the new names.
+   ========================================================================== */
+@theme inline {
+  --color-bg-primary: var(--canvas);
+  --color-bg-secondary: var(--surface);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-soft);
+  --color-text-muted: var(--ink-mute);
+  --color-color-primary: var(--accent);
+  --color-color-secondary: var(--accent-dim);
+  --color-color-accent: var(--accent);
+  --color-border-color: var(--hairline);
+  --color-border-hover: var(--hairline-strong);
+  --color-glass-bg: var(--surface);
+  --color-tag-bg: var(--accent-wash);
+  --font-heading: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --background-image-gradient-brand: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    var(--accent-dim) 100%
+  );
+  --background-image-gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-dim) 0%,
+    var(--accent) 100%
+  );
 }
 
-body.light .text-text-primary {
-  color: #0f172a !important;
-}
-
-body.light .text-text-secondary {
-  color: #334155 !important;
-}
-
-body.light .text-text-muted {
-  color: #64748b !important;
-}
-
-body.light .text-color-primary {
-  color: #059669 !important;
-}
-
-body.light .text-color-secondary {
-  color: #047857 !important;
-}
-
-body.light .bg-tag-bg {
-  background-color: rgba(5, 150, 105, 0.08) !important;
-  color: #059669;
-}
-
-body.light .border-border-color {
-  border-color: rgba(5, 150, 105, 0.18) !important;
-}
-
-body:not(.light) .text-text-primary {
-  color: #ffffff;
-}
-
-body:not(.light) .text-text-secondary {
-  color: #cbd5e1;
-}
-
-body:not(.light) .text-text-muted {
-  color: #94a3b8;
-}
-
-/* Custom Scrollbar for premium feel */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
+/* ==========================================================================
+   BASE
+   ========================================================================== */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: var(--font-body);
-  background: var(--bg-primary);
-  background-image: var(--bg-gradient);
-  background-attachment: fixed;
-  color: var(--text-secondary);
-  line-height: 1.6;
+  font-family: var(--font-sans);
+  background-color: var(--canvas);
+  color: var(--ink-soft);
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.35s var(--ease-out-expo), color 0.35s var(--ease-out-expo);
+}
+
+/* Ambient field lives on a FIXED layer. Deliberately not
+   background-attachment:fixed, which is a known mobile repaint killer. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(58rem 40rem at 78% -8%, var(--ambient-a), transparent 62%),
+    radial-gradient(44rem 34rem at 6% 8%, var(--ambient-b), transparent 60%);
+}
+
+/* Grain: fixed + pointer-events-none only (taste-skill 6.E). Applying this
+   to a scrolling container would burn GPU on every frame. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: var(--text-primary);
+  color: var(--ink);
+  text-wrap: balance;
 }
 
-/* Hero ambient background glow utilities */
-.hero-glow-1 {
-  background: rgba(16, 185, 129, 0.12);
-}
-body.light .hero-glow-1 {
-  background: rgba(5, 150, 105, 0.08);
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
-.hero-glow-2 {
-  background: rgba(52, 211, 153, 0.08);
-}
-body.light .hero-glow-2 {
-  background: rgba(16, 185, 129, 0.05);
+/* Visible focus for keyboard users, never removed (ui-ux-pro-max priority 1). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-/* Custom Tailwind Component Utility layers using apply compiler directives */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--canvas); }
+::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 999px;
+  border: 3px solid var(--canvas);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+/* A faint baseline grid, used only where it organises real content. */
+@utility rule-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
+  background-size: 96px 100%;
+}
+
+@utility surface {
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-surface);
+}
+
+@utility surface-raised {
+  background-color: var(--elevated);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-surface);
+}
+
+/* Kept for the Blog/Admin subpages. Retuned away from heavy glassmorphism
+   toward a flat surface with a single hairline. */
 @utility glass-card {
-  @apply bg-glass-bg backdrop-blur-[16px] border border-border-color rounded-2xl transition-all duration-300 ease-in-out shadow-lg;
+  background-color: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-surface);
 }
 
-body.light .glass-card {
-  @apply bg-white/85 backdrop-blur-[16px] border-emerald-600/15 shadow-[0_10px_30px_rgba(5,150,105,0.08),0_2px_8px_rgba(0,0,0,0.03)];
+/* Single-hue treatment. No two-stop brand gradient on display type. */
+@utility gradient-text {
+  color: var(--accent);
+}
+
+/* --- Buttons ------------------------------------------------------------
+   Shape rule: interactive controls are pill. Surfaces are 18px. Inputs 10px.
+   Primary uses --accent-ink (dark) text so contrast clears AA; the previous
+   white-on-emerald-gradient was 2.7:1 and failed.                        */
+@utility btn-accent {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  padding: 0.8125rem 1.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 0.2s var(--ease-out-expo),
+    background-color 0.2s var(--ease-out-expo);
+}
+@utility btn-accent-hover {
+  background-color: var(--accent-dim);
+  transform: translateY(-2px);
+}
+@utility btn-accent-active {
+  transform: translateY(1px) scale(0.985);
+}
+
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--hairline-strong);
+  font-weight: 600;
+  padding: 0.8125rem 1.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease-out-expo),
+    color 0.2s var(--ease-out-expo),
+    background-color 0.2s var(--ease-out-expo),
+    transform 0.2s var(--ease-out-expo);
+}
+@utility btn-ghost-hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--accent-wash);
+  transform: translateY(-2px);
+}
+@utility btn-ghost-active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* Legacy alias so existing markup keeps the same silhouette. */
+@utility btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  padding: 0.8125rem 1.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out-expo), background-color 0.2s var(--ease-out-expo);
+}
+@utility btn-secondary {
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--hairline-strong);
+  font-weight: 600;
+  padding: 0.8125rem 1.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out-expo), border-color 0.2s var(--ease-out-expo);
 }
 
 @utility glass-card-hover {
-  @apply border-border-hover shadow-[0_12px_40px_0_rgba(0,0,0,0.45)];
+  border-color: var(--hairline-strong);
 }
 
-body.light .glass-card-hover {
-  @apply border-emerald-600/35 shadow-[0_12px_36px_rgba(5,150,105,0.12)];
+/* --- Chips / tags ------------------------------------------------------- */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: var(--accent-wash);
+  border: 1px solid var(--hairline);
+  color: var(--accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
 }
 
-@utility gradient-text {
-  @apply bg-gradient-brand bg-clip-text text-transparent inline-block;
+/* The one structural eyebrow in the page (taste-skill 4.7 allows 1 per 3
+   sections). Do not add more without removing others. */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--accent);
 }
 
-body.light .gradient-text {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@utility accent-gradient-text {
-  @apply bg-gradient-accent bg-clip-text text-transparent inline-block;
-}
-
-@utility btn-primary {
-  @apply bg-gradient-brand text-white border-none font-heading font-semibold px-6 py-3 rounded-[30px] cursor-pointer transition-all duration-300 hover:translate-y-[-2px] shadow-[0_4px_15px_rgba(16,185,129,0.25)];
-}
-
-body.light .btn-primary {
-  @apply text-white shadow-[0_4px_15px_rgba(5,150,105,0.25)];
-}
-
-@utility btn-secondary {
-  @apply bg-transparent text-text-primary border border-border-color font-heading font-semibold px-6 py-3 rounded-[30px] cursor-pointer transition-all duration-300 hover:bg-tag-bg hover:border-border-hover hover:translate-y-[-2px];
-}
-
-body.light .btn-secondary {
-  @apply text-text-primary hover:text-color-primary border-emerald-600/25 hover:border-emerald-600/50 hover:bg-emerald-50;
-}
-
-/* Custom form inputs */
+/* --- Forms -------------------------------------------------------------- */
 .portfolio-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  background: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  color: var(--text-primary);
+  padding: 0.8125rem 1rem;
+  background-color: var(--canvas);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-control);
+  color: var(--ink);
   font-size: 0.95rem;
-  outline: none;
-  transition: all 0.3s ease;
+  line-height: 1.5;
+  transition:
+    border-color 0.2s var(--ease-out-expo),
+    box-shadow 0.2s var(--ease-out-expo);
 }
+html.light .portfolio-input { background-color: #ffffff; }
 
-.portfolio-input:hover {
-  border-color: var(--border-hover);
-}
+.portfolio-input::placeholder { color: var(--ink-mute); opacity: 1; }
+
+.portfolio-input:hover { border-color: var(--hairline-strong); }
 
 .portfolio-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
 }
 
-body.light .portfolio-input {
-  background: #ffffff;
-  border-color: rgba(5, 150, 105, 0.22);
-  color: #0f172a;
-}
+/* ==========================================================================
+   REDUCED MOTION
+   Non-negotiable above MOTION_INTENSITY 3. Everything loops, drifts,
+   or marquees stops here. Motion lib calls gate on useReducedMotion().
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 
-body.light .portfolio-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-}
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 
-.portfolio-input::placeholder {
-  color: var(--text-muted);
+  .animate-marquee,
+  .animate-marquee-rev,
+  .animate-drift,
+  .animate-caret {
+    animation: none !important;
+    transform: none !important;
+  }
 }

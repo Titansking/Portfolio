@@ -1,83 +1,126 @@
-import { Calendar, Briefcase, Award, CheckCircle } from 'lucide-react';
+import { useRef } from 'react';
+import { Container, Section, SectionHead, Hairline } from '../ui/Section';
+import { Reveal, RevealList, RevealItem } from '../ui/Reveal';
+import { CountUp } from '../ui/CountUp';
+import { ScrollLine } from '../ui/Motion';
+
+const METRICS = [
+  { value: 20, label: 'faster initial render', detail: 'Component lifecycles restructured' },
+  { value: 15, label: 'shorter cycle time', detail: 'Sprint workflow changes' },
+  { value: 25, label: 'less technical debt', detail: 'Bottlenecks found in review' },
+];
+
+const CONTRIBUTIONS = [
+  'Built and shipped responsive web applications across the stack with React and Node, restructuring component lifecycles to cut initial render latency by 20%.',
+  'Worked directly with the product team to launch two SaaS platforms and their AI features, tightening sprint workflows to shorten cycle times by 15%.',
+  'Ran 30+ peer code reviews and traced the architectural bottlenecks behind recurring regressions, cutting them and codebase technical debt by 25%.',
+];
+
+const STACK = [
+  'React',
+  'Node.js',
+  'Express',
+  'TypeScript',
+  'MongoDB',
+  'REST APIs',
+  'Microservices',
+  'Tailwind CSS',
+];
 
 export default function Experience() {
-  const contributions = [
-    'Engineered responsive web applications across the full stack using React.js and Node.js, restructuring component lifecycles to cut initial render latency by 20%.',
-    'Collaborated directly with product teams to build and deploy 2 core SaaS platforms and AI features, streamlining sprint workflows and shortening cycle times by 15%.',
-    'Conducted 30+ peer code reviews and diagnosed critical architectural bottlenecks, reducing regression issues and codebase technical debt by 25%.'
-  ];
-
-  const toolsUsed = ['React.js', 'Node.js', 'Express.js', 'TypeScript', 'MongoDB', 'RESTful APIs', 'Microservices', 'Tailwind CSS'];
-
+  const contributionsRef = useRef<HTMLOListElement>(null);
   return (
-    <section id="experience" className="py-24 relative">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl font-bold mb-3">Work <span className="gradient-text">Experience</span></h2>
-          <p className="text-text-secondary text-[1.1rem] max-w-[600px] mx-auto">My professional internship experience as a full-stack engineer building production SaaS systems.</p>
-        </div>
+    <Section id="experience" className="border-t border-hairline">
+      <Container>
+        <Reveal>
+          <SectionHead
+            title={
+              <>
+                One internship,
+                <br />
+                <span className="text-accent">owned end to end.</span>
+              </>
+            }
+          />
+        </Reveal>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="glass-card p-10 flex flex-col gap-6">
-            {/* Header info */}
-            <div className="flex items-center gap-6 border-b border-border-color pb-6">
-              <div className="w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-color-primary flex items-center justify-center shrink-0">
-                <Briefcase size={28} />
-              </div>
-              <div className="flex-1 flex flex-col gap-1.5">
-                <div className="flex justify-between items-center flex-wrap gap-2">
-                  <h3 className="font-heading text-2xl font-bold text-text-primary">Full-Stack Developer Intern</h3>
-                  <span className="text-xs font-bold px-3 py-1 rounded-[20px] bg-tag-bg border border-border-color text-color-primary">Remote</span>
-                </div>
-                <div className="flex items-center gap-3 text-text-secondary text-[0.95rem] flex-wrap">
-                  <span className="font-semibold text-text-primary">Krafzen Inc.</span>
-                  <span className="text-text-muted">•</span>
-                  <span className="flex items-center gap-1.5 text-text-muted text-[0.9rem]">
-                    <Calendar size={14} className="text-color-primary" />
-                    Oct 2025 – Apr 2026
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Content points */}
-            <div className="flex flex-col gap-6">
+        <Reveal delay={0.08} className="mt-14">
+          {/* Role band. The single role gets a full-width editorial band
+              rather than a lone centred card. */}
+          <div className="border-t border-hairline pt-8">
+            <div className="grid gap-x-16 gap-y-8 lg:grid-cols-[1fr_1.15fr]">
               <div>
-                <h4 className="font-heading text-[1.1rem] font-bold text-text-primary mb-3">Core Contributions & Achievements</h4>
-                <ul className="flex flex-col gap-3.5">
-                  {contributions.map((point, idx) => (
-                    <li key={idx} className="flex items-start gap-3.5 text-[0.95rem] text-text-secondary leading-relaxed">
-                      <CheckCircle size={18} className="text-color-primary shrink-0 mt-1" />
-                      <span>{point}</span>
+                <h3 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                  Full-Stack Developer Intern
+                </h3>
+                <p className="mt-3 font-display text-lg text-accent">Krafzen Inc.</p>
+                <dl className="mt-7 space-y-2 font-mono text-[0.8125rem] text-ink-mute">
+                  <div className="flex gap-3">
+                    <dt className="w-16 shrink-0 uppercase">Period</dt>
+                    <dd>Oct 2025 to Apr 2026</dd>
+                  </div>
+                  <div className="flex gap-3">
+                    <dt className="w-16 shrink-0 uppercase">Setup</dt>
+                    <dd>Remote, full time</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div>
+                <h4 className="font-mono text-[0.75rem] tracking-[0.2em] text-ink-mute uppercase">
+                  What I was responsible for
+                </h4>
+                {/* Spine fills as the responsibilities scroll past, matching
+                    the numbered rail on the left. */}
+                <ol ref={contributionsRef} className="relative mt-5 space-y-5 pl-7">
+                  <ScrollLine target={contributionsRef} className="inset-y-1 left-[3px]" />
+                  {CONTRIBUTIONS.map((point, i) => (
+                    <li key={i} className="flex gap-5">
+                      <span className="mt-0.5 font-mono text-xs text-accent">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <p className="text-[0.9375rem] leading-relaxed text-ink-soft">
+                        {point}
+                      </p>
                     </li>
                   ))}
-                </ul>
-              </div>
-
-              {/* Technologies utilized list */}
-              <div className="mt-2">
-                <h4 className="font-heading text-[1.1rem] font-bold text-text-primary mb-3">Technologies Leveraged</h4>
-                <div className="flex flex-wrap gap-2.5">
-                  {toolsUsed.map((tech) => (
-                    <span key={tech} className="px-3 py-1.5 bg-tag-bg border border-border-color rounded-[20px] text-color-primary text-xs font-semibold">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* CEO LOR highlighted text */}
-              <div className="flex items-start gap-4 p-5 bg-color-primary/5 border border-color-primary/15 rounded-xl mt-4">
-                <Award size={20} className="text-color-primary shrink-0 mt-0.5" />
-                <p className="text-[0.9rem] text-text-secondary leading-relaxed">
-                  <strong>Letter of Recommendation:</strong> Commended by Khadija Zain (CEO, Krafzen Inc.) 
-                  for technical execution, ownership, and reliability across full-stack deliverables.
-                </p>
+                </ol>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </Reveal>
+
+        {/* Impact numerals, pulled out of the prose and given room to land. */}
+        <RevealList className="mt-16 grid gap-y-10 sm:grid-cols-3">
+          {METRICS.map((m) => (
+            <RevealItem key={m.label}>
+              <p className="font-display text-[3.25rem] font-bold leading-none tracking-tight text-accent">
+                <CountUp value={m.value} suffix="%" />
+              </p>
+              <p className="mt-3 font-display text-[0.9375rem] font-semibold text-ink">
+                {m.label}
+              </p>
+              <p className="mt-1 text-sm text-ink-mute">{m.detail}</p>
+            </RevealItem>
+          ))}
+        </RevealList>
+
+        <Reveal delay={0.08} className="mt-16">
+          <Hairline />
+          <div className="grid gap-6 pt-8 lg:grid-cols-[260px_1fr]">
+            <h4 className="font-mono text-[0.75rem] tracking-[0.2em] text-ink-mute uppercase">
+              Stack in use
+            </h4>
+            <ul className="flex flex-wrap gap-x-7 gap-y-3">
+              {STACK.map((tool) => (
+                <li key={tool} className="font-mono text-sm text-ink-soft">
+                  {tool}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Reveal>
+      </Container>
+    </Section>
   );
 }
