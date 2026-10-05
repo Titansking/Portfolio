@@ -27,13 +27,19 @@ export default function StackMarquee() {
         <p className="eyebrow shrink-0">Works daily with</p>
 
         {reduce ? (
-          <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            {ALL_MARKS.map((icon) => (
-              <li key={icon.title}>
-                <Mark icon={icon} />
-              </li>
-            ))}
-          </ul>
+          /* The strip duplicates its list to loop the -50% keyframe, so the
+             duplicate is where the excess width comes from. Clipped here rather
+             than by the page, which keeps a stray wide child from ever being
+             able to scroll the document. */
+          <div className="relative overflow-hidden">
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              {ALL_MARKS.map((icon) => (
+                <li key={icon.title}>
+                  <Mark icon={icon} />
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
           <div
             className="relative overflow-hidden"

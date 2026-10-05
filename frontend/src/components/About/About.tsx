@@ -1,40 +1,28 @@
 import { useRef } from 'react';
-import { BrainCircuit, Lightbulb, GraduationCap, Download } from 'lucide-react';
+import { Layers, ShieldCheck, GraduationCap, Download } from 'lucide-react';
 import { trackResumeDownload } from '../../services/api';
+import { EDUCATION, PROFILE } from '../../content/profile';
 import { Container, Section, SectionHead, Hairline } from '../ui/Section';
 import { Reveal, RevealList } from '../ui/Reveal';
 import { HoverCard, ScrollLine } from '../ui/Motion';
 
-const EDUCATION = [
+/* Each pillar is a claim the resume already backs with a project or a number,
+   so nothing here needs to be taken on faith. */
+const PILLARS = [
   {
-    years: '2022 to 2026',
-    degree: 'Bachelor of Technology, Computer Science and Engineering',
-    school: 'Rungta College of Engineering and Technology',
-    place: 'Bhilai, Chhattisgarh',
+    icon: Layers,
+    title: 'One codebase, two platforms',
+    body: 'SurplusBite runs on Android and iOS from a single Dart codebase, which is the part I enjoy most about Flutter.',
   },
   {
-    years: '2020 to 2022',
-    degree: 'Higher Secondary, Class XII',
-    school: 'Sardar Patel Public School',
-    place: 'Bokaro, Jharkhand',
-  },
-];
-
-const INTERESTS = [
-  {
-    icon: BrainCircuit,
-    title: 'Applied ML and IoT',
-    body: 'Wiring machine learning models into devices that are actually deployed.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'System design',
-    body: 'Service boundaries, data modelling, and the trade-offs behind both.',
+    icon: ShieldCheck,
+    title: 'Correctness under concurrency',
+    body: 'Atomic transactions so the last portion cannot sell twice, and 66 emulator tests proving the security rules hold.',
   },
   {
     icon: GraduationCap,
-    title: 'Keeping current',
-    body: 'Cloud-native tooling, web standards, and what is landing in browsers.',
+    title: 'Foundations first',
+    body: '540+ algorithmic problems solved across Coding Ninjas and GeeksforGeeks, mostly in Java.',
   },
 ];
 
@@ -68,7 +56,7 @@ export default function About() {
                     <span className="text-accent">the whole stack.</span>
                   </>
                 }
-                lede="Backend, frontend, and the deployment path in between."
+                lede="Web, mobile, and the deployment path in between."
               />
             </Reveal>
             <Reveal delay={0.1} className="mt-8">
@@ -87,18 +75,23 @@ export default function About() {
             <Reveal>
               <div className="space-y-6 text-[1.0625rem] leading-relaxed text-ink-soft">
                 <p>
-                  I am in the final stretch of a B.Tech in Computer Science at Rungta
-                  College of Engineering and Technology, graduating in 2026. I started
-                  out building web pages, and the work has since moved up the stack
-                  into the parts that are harder to reverse: data models, auth
-                  boundaries, and the shape of a service.
+                  I am a {PROFILE.role.toLowerCase()} based in {PROFILE.location},
+                  graduating with a B.Tech in Computer Science in 2026. I started
+                  out building web pages, and the work has since moved up the
+                  stack into the parts that are harder to reverse: data models,
+                  auth boundaries, and the shape of a service.
                 </p>
                 <p>
                   Most of that has been learned on live products rather than in
                   tutorials. My internship at Krafzen Inc. was fully remote, which
-                  meant owning features end to end, writing the tests, and getting
-                  paged when something broke. That is the part of the job I value
-                  most, and the part I am best at.
+                  meant owning features end to end, reviewing other people's code,
+                  and getting paged when something broke. That is the part of the
+                  job I value most, and the part I am best at.
+                </p>
+                <p>
+                  Since then I have been working across both sides of the stack at
+                  once: a Flutter marketplace on Firestore, and a TypeScript REST
+                  API with a React dashboard in front of it.
                 </p>
                 <p>
                   I am looking for a full-time role on a product team that ships
@@ -144,7 +137,7 @@ export default function About() {
 
               {/* Hairline columns rather than three identical cards. */}
               <RevealList className="grid gap-x-10 gap-y-8 pt-8 sm:grid-cols-3">
-                {INTERESTS.map(({ icon: Icon, title, body }) => (
+                {PILLARS.map(({ icon: Icon, title, body }) => (
                   <HoverCard key={title} stagger>
                     <Icon size={22} className="text-accent transition-transform duration-300" />
                     <h4 className="mt-4 font-display text-base font-semibold text-ink">

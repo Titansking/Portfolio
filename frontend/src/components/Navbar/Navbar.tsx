@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'motion/react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 
+/* Nav order matches the page order, which matches the resume. */
 const NAV_LINKS = [
   { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
   { name: 'Experience', href: '#experience' },
+  { name: 'Skills', href: '#skills' },
   { name: 'Projects', href: '#projects' },
-  { name: 'Writing', href: '#blog' },
+  { name: 'Achievements', href: '#achievements' },
   { name: 'Contact', href: '#contact' },
 ];
 
@@ -129,7 +130,7 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               aria-current={isCurrent(link.href) ? 'true' : undefined}
-              className={`relative rounded-full px-3.5 py-2 font-display text-[0.9375rem] font-medium no-underline transition-colors duration-200 ${
+              className={`relative flex min-h-11 items-center rounded-full px-3.5 font-display text-[0.9375rem] font-medium no-underline transition-colors duration-200 ${
                 isCurrent(link.href) ? 'text-accent' : 'text-ink-soft hover:text-ink'
               }`}
             >
@@ -149,7 +150,7 @@ export default function Navbar() {
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
             aria-pressed={theme === 'light'}
-            className="ml-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+            className="ml-2 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -160,7 +161,7 @@ export default function Navbar() {
             type="button"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -171,7 +172,7 @@ export default function Navbar() {
             aria-expanded={isOpen}
             aria-controls="mobile-drawer"
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink"
           >
             {isOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

@@ -1,20 +1,21 @@
 import { Container } from '../ui/Section';
 import { GITHUB_MARK } from '../../lib/techIcons';
+import { PROFILE } from '../../content/profile';
 
+/* Mirrors the nav and the page order, which mirrors the resume. */
 const LINKS = [
   { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
   { label: 'Experience', href: '#experience' },
+  { label: 'Skills', href: '#skills' },
   { label: 'Projects', href: '#projects' },
   { label: 'Achievements', href: '#achievements' },
   { label: 'Contact', href: '#contact' },
-  { label: 'Writing', href: '#blog' },
 ];
 
 const SOCIALS = [
-  { label: 'GitHub', href: 'https://github.com/Titansking' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/ashwani-kumar-898189281' },
-  { label: 'Email', href: 'mailto:akumarclash1@gmail.com' },
+  { label: 'GitHub', href: PROFILE.github },
+  { label: 'LinkedIn', href: PROFILE.linkedin },
+  { label: 'Email', href: PROFILE.emailHref },
 ];
 
 export default function Footer() {
@@ -27,12 +28,14 @@ export default function Footer() {
           <div className="max-w-[34ch]">
             <a
               href="#hero"
-              className="font-display text-lg font-bold tracking-tight text-ink no-underline"
+              className="inline-flex min-h-11 items-center font-display text-lg font-bold tracking-tight text-ink no-underline"
             >
-              AK<span className="text-accent">.</span>dev
+              {PROFILE.initials}
+              <span className="text-accent">.</span>dev
             </a>
             <p className="mt-3 text-[0.9375rem] leading-relaxed text-ink-soft">
-              Full-stack developer working on SaaS products, based in Kolkata.
+              Full-stack and Flutter developer working on SaaS products, based in{' '}
+              {PROFILE.location.replace(', India', '')}.
             </p>
           </div>
 
@@ -42,7 +45,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    className="font-display text-[0.9375rem] text-ink-mute no-underline transition-colors duration-200 hover:text-accent"
+                    className="inline-flex min-h-11 items-center font-display text-[0.9375rem] text-ink-mute no-underline transition-colors duration-200 hover:text-accent"
                   >
                     {link.label}
                   </a>
@@ -61,7 +64,7 @@ export default function Footer() {
                 href={s.href}
                 target={s.href.startsWith('http') ? '_blank' : undefined}
                 rel={s.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="inline-flex items-center gap-2 font-display text-[0.9375rem] text-ink-soft no-underline transition-colors duration-200 hover:text-accent"
+                className="inline-flex min-h-11 items-center gap-2 font-display text-[0.9375rem] text-ink-soft no-underline transition-colors duration-200 hover:text-accent"
               >
                 {s.label === 'GitHub' ? (
                   <svg
@@ -81,8 +84,8 @@ export default function Footer() {
         </ul>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-hairline pt-6 font-mono text-xs text-ink-mute sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {year} Ashwani Kumar</p>
-          <p>React, TypeScript, Tailwind</p>
+          <p>&copy; {year} {PROFILE.name}</p>
+          <p>React, TypeScript, Flutter, Tailwind</p>
         </div>
       </Container>
     </footer>

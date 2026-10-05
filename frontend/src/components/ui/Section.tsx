@@ -47,7 +47,9 @@ export function SectionHead({ title, lede, eyebrow, className = '' }: SectionHea
       <h2 className="font-display text-[2.1rem] leading-[1.08] font-bold tracking-tight sm:text-5xl">
         {title}
       </h2>
-      {lede ? <p className="mt-5 text-lg leading-relaxed text-ink-soft">{lede}</p> : null}
+      {lede ? (
+        <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-ink-soft">{lede}</p>
+      ) : null}
     </div>
   );
 }

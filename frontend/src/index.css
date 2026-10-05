@@ -209,6 +209,14 @@ h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
 }
 
+/* Any element with an href is interactive, so it gets a pointer cursor by
+   default. Set here rather than per-component so a new link cannot forget it,
+   which is the usual way `cursor` goes missing and the element stops reading
+   as clickable. Non-link elements (rows, cards, tabs) still opt in explicitly. */
+a[href] {
+  cursor: pointer;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--accent-ink);
@@ -233,6 +241,27 @@ h1, h2, h3, h4, h5, h6 {
 /* ==========================================================================
    UTILITIES
    ========================================================================== */
+
+/* Scroll affordance for the skill-category rail. The edge fade is what tells
+   a touch user there are five more categories past the last visible one.
+
+   Applied by class rather than inline style because the mask has to be undone
+   at lg, where the rail becomes a column with nothing to scroll. An inline
+   style would outrank the utility class and the fade would persist there. */
+@utility rail-fade {
+  mask-image: linear-gradient(
+    90deg,
+    #000 0,
+    #000 calc(100% - 2rem),
+    transparent 100%
+  );
+}
+@media (min-width: 64rem) {
+  .rail-fade {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
 
 /* A faint baseline grid, used only where it organises real content. */
 @utility rule-grid {

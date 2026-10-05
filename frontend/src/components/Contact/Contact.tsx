@@ -1,22 +1,57 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, LoaderCircle } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  LoaderCircle,
+} from 'lucide-react';
 import { sendContactMessage } from '../../services/api';
+import { PROFILE } from '../../content/profile';
+import { GITHUB_MARK } from '../../lib/techIcons';
 import { Container, Section, SectionHead, Hairline } from '../ui/Section';
 import { Reveal } from '../ui/Reveal';
 
 type Field = 'name' | 'email' | 'message';
 type Errors = Partial<Record<Field, string>>;
 
-const CHANNELS = [
+/* Email and phone carry custom glyphs, so this row type is looser than a plain
+   list of icon components. */
+const CHANNELS: {
+  icon?: typeof Mail;
+  glyph?: 'github' | 'linkedin';
+  label: string;
+  value: string;
+  href: string | null;
+}[] = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'akumarclash1@gmail.com',
-    href: 'mailto:akumarclash1@gmail.com',
+    value: PROFILE.email,
+    href: PROFILE.emailHref,
   },
-  { icon: Phone, label: 'Phone', value: '+91 76440 59802', href: 'tel:+917644059802' },
-  { icon: MapPin, label: 'Based in', value: 'Kolkata, India', href: null },
+  { icon: Phone, label: 'Phone', value: PROFILE.phone, href: PROFILE.phoneHref },
+  {
+    glyph: 'github',
+    label: 'GitHub',
+    value: 'github.com/Titansking',
+    href: PROFILE.github,
+  },
+  {
+    glyph: 'linkedin',
+    label: 'LinkedIn',
+    value: 'in/ashwani-kumar',
+    href: PROFILE.linkedin,
+  },
+  {
+    icon: MapPin,
+    label: 'Based in',
+    value: PROFILE.location,
+    href: null,
+  },
 ];
 
 const EMPTY = { name: '', email: '', message: '' };
@@ -111,11 +146,27 @@ export default function Contact() {
               </h3>
               <Hairline className="mt-4" />
               <ul>
-                {CHANNELS.map(({ icon: Icon, label, value, href }) => {
+                {CHANNELS.map(({ icon: Icon, glyph, label, value, href }) => {
                   const inner = (
                     <>
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-hairline text-accent">
-                        <Icon size={17} />
+                        {glyph === 'github' ? (
+                          <svg
+                            viewBox="0 0 24 24"
+                            width={17}
+                            height={17}
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d={GITHUB_MARK.path} />
+                          </svg>
+                        ) : glyph === 'linkedin' ? (
+                          <span aria-hidden="true" className="font-display text-sm font-bold tracking-tight">
+                            in
+                          </span>
+                        ) : Icon ? (
+                          <Icon size={17} />
+                        ) : null}
                       </span>
                       <span className="min-w-0">
                         <span className="block text-sm text-ink-mute">{label}</span>
@@ -131,12 +182,18 @@ export default function Contact() {
                       {href ? (
                         <a
                           href={href}
-                          className="flex items-center gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
+                          /* Every contact row opens externally, so say so rather
+                             than letting the user discover it after the click. */
+                          target={href.startsWith('http') ? '_blank' : undefined}
+                          rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          className="flex min-h-11 cursor-pointer items-center gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-70"
                         >
                           {inner}
                         </a>
                       ) : (
-                        <div className="flex items-center gap-4 py-4">{inner}</div>
+                        <div className="flex min-h-11 items-center gap-4 py-4">
+                          {inner}
+                        </div>
                       )}
                     </li>
                   );

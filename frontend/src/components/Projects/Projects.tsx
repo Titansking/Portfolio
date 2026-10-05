@@ -1,76 +1,13 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { SPRING } from '../ui/motionPresets';
-import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { ArrowUpRight, ChevronDown, Download } from 'lucide-react';
 import { getMark, GITHUB_MARK } from '../../lib/techIcons';
+import { PROJECTS, type Project } from '../../content/profile';
 import { Container, Section, SectionHead } from '../ui/Section';
 import { Reveal } from '../ui/Reveal';
 
-type Highlight = { title: string; body: string };
-
-type Project = {
-  id: string;
-  title: string;
-  kind: string;
-  summary: string;
-  tech: string[];
-  repo: string;
-  demo: string | null;
-  highlights: Highlight[];
-};
-
-const PROJECTS: Project[] = [
-  {
-    id: 'gdocs',
-    title: 'Google Docs Clone',
-    kind: 'Real-time collaborative editor',
-    summary:
-      'A shared document workspace where many people edit the same page at once, with live cursors and export to the usual formats.',
-    tech: ['React.js', 'TypeScript', 'Convex', 'Clerk', 'Liveblocks'],
-    repo: 'https://github.com/Titansking',
-    demo: null,
-    highlights: [
-      {
-        title: 'Concurrency',
-        body: 'State stays in sync across up to 50 simultaneous editors with propagation held under 50ms.',
-      },
-      {
-        title: 'Presence and access',
-        body: 'Liveblocks WebSocket pipelines carry presence and cursor position, with Clerk handling role-based access on every document route.',
-      },
-      {
-        title: 'Editing surface',
-        body: 'Rich-text controls, structured tables, asset uploads, and export to PDF, HTML, TXT or JSON.',
-      },
-    ],
-  },
-  {
-    id: 'taskflow',
-    title: 'Task Flow',
-    kind: 'Kanban project management',
-    summary:
-      'A board-based project tool for agile teams, built around a stateless API and a dashboard that holds up on a phone.',
-    tech: ['React.js', 'Node.js', 'Express', 'TypeScript', 'MongoDB', 'Tailwind CSS'],
-    repo: 'https://github.com/Titansking',
-    demo: 'https://task-flow-ivory-five.vercel.app/',
-    highlights: [
-      {
-        title: 'Throughput',
-        body: 'A REST API over an indexed MongoDB schema that holds 200+ requests per minute under concurrent load.',
-      },
-      {
-        title: 'Type safety',
-        body: 'TypeScript end to end, which removed the runtime bugs that used to come from mismatched data shapes.',
-      },
-      {
-        title: 'Session handling',
-        body: 'Stateless JWT sessions with bcrypt hashing, plus route guards on every state-mutating endpoint.',
-      },
-    ],
-  },
-];
-
-function TechRow({ names }: { names: string[] }) {
+function TechRow({ names }: { names: readonly string[] }) {
   return (
     <ul className="flex flex-wrap items-center gap-x-6 gap-y-3">
       {names.map((name) => {
@@ -105,6 +42,41 @@ function TechRow({ names }: { names: string[] }) {
   );
 }
 
+/** GitHub / live site. Each is 44px, the minimum touch target the platform
+ *  guidelines ask for.
+ *
+ *  A download link is not repeated here. The APK has a labelled row in the body
+ *  of the cell, which says what it is; a third unlabelled icon in this corner
+ *  would only duplicate it. */
+function ProjectLinks({ project }: { project: Project }) {
+  return (
+    <div className="flex shrink-0 items-center gap-2">
+      <a
+        href={project.repo}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${project.title} source on GitHub, opens in a new tab`}
+        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+      >
+        <svg viewBox="0 0 24 24" width={17} height={17} fill="currentColor" aria-hidden="true">
+          <path d={GITHUB_MARK.path} />
+        </svg>
+      </a>
+      {project.demo ? (
+        <a
+          href={project.demo}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`${project.title} live site, opens in a new tab`}
+          className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+        >
+          <ArrowUpRight size={17} />
+        </a>
+      ) : null}
+      </div>
+  );
+}
+
 function ProjectCell({ project, wide }: { project: Project; wide: boolean }) {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
@@ -112,7 +84,7 @@ function ProjectCell({ project, wide }: { project: Project; wide: boolean }) {
 
   return (
     <motion.article
-      className={`group flex flex-col rounded-[18px] border border-hairline bg-surface p-7 transition-colors duration-300 hover:border-hairline-strong sm:p-9 ${
+      className={`group flex h-full flex-col rounded-[18px] border border-hairline bg-surface p-7 transition-colors duration-300 hover:border-hairline-strong sm:p-9 ${
         wide ? 'lg:p-11' : ''
       }`}
       initial={false}
@@ -128,33 +100,30 @@ function ProjectCell({ project, wide }: { project: Project; wide: boolean }) {
         >
           {project.title}
         </h3>
-        <div className="flex shrink-0 items-center gap-2">
-          <a
-            href={project.repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${project.title} source on GitHub`}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
-          >
-            <svg viewBox="0 0 24 24" width={17} height={17} fill="currentColor" aria-hidden="true">
-              <path d={GITHUB_MARK.path} />
-            </svg>
-          </a>
-          {project.demo ? (
-            <a
-              href={project.demo}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${project.title} live site`}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
-            >
-              <ArrowUpRight size={17} />
-            </a>
-          ) : null}
-        </div>
+        <ProjectLinks project={project} />
       </div>
 
       <p className="mt-3 font-mono text-[0.8125rem] text-accent">{project.kind}</p>
+
+      {/* The APK gets a labelled row rather than a fourth icon. "Download" on
+          its own does not say what comes down, and the icon-only button in the
+          corner is easy to miss next to the source and demo links. */}
+      {project.download ? (
+        /* `download` is deliberately absent. It only works same-origin, so on a
+           Google Drive URL the browser ignores it and the server decides
+           whether the file arrives or a preview page does. Leaving it off keeps
+           the markup honest about what actually happens. */
+        <a
+          href={project.download.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Download ${project.title} ${project.download.label}, opens in a new tab`}
+          className="mt-5 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-[10px] border border-hairline-strong px-3.5 font-display text-[0.875rem] font-semibold text-ink no-underline transition-colors duration-200 hover:border-accent hover:text-accent"
+        >
+          <Download size={16} />
+          {project.download.label}
+        </a>
+      ) : null}
 
       <p
         className={`mt-6 leading-relaxed text-ink-soft ${
@@ -174,7 +143,7 @@ function ProjectCell({ project, wide }: { project: Project; wide: boolean }) {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={panelId}
-          className="flex cursor-pointer items-center gap-2 font-display text-[0.9375rem] font-semibold text-ink transition-colors duration-200 hover:text-accent"
+          className="-ml-2 flex min-h-11 cursor-pointer items-center gap-2 px-2 font-display text-[0.9375rem] font-semibold text-ink transition-colors duration-200 hover:text-accent"
         >
           {open ? 'Hide' : 'Read'} technical detail
           <ChevronDown
@@ -232,7 +201,7 @@ export default function Projects() {
                 <span className="text-accent">built and released.</span>
               </>
             }
-            lede="Both shipped from an empty repository to a live URL, which is the part I care about most."
+            lede="One shipped as an installable Android app, one as a live web URL. Both from an empty repository, which is the part I care about most."
           />
         </Reveal>
 

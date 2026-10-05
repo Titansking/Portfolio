@@ -2,11 +2,18 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { ArrowDownRight, Download } from 'lucide-react';
 import { trackResumeDownload } from '../../services/api';
-import profileImg from '../../assets/profile-cutout.png';
-import profileWebp from '../../assets/profile-cutout.webp';
+import { PROFILE, SHIPS } from '../../content/profile';
+import { GITHUB_MARK } from '../../lib/techIcons';
 import { Container } from '../ui/Section';
 
-const SHIPS = ['full-stack apps', 'SaaS products', 'open source tools'];
+import profile320 from '../../assets/profile-320.webp';
+import profile640 from '../../assets/profile-640.webp';
+
+/* Portrait is exported at 320 and 640. 320 is the rendered CSS width and 640
+   its retina pair, so no device ever downloads the small file on a 2x screen.
+   `sizes` is what tells the browser which to pick: full width of the portrait
+   column below lg, capped at 320px above it. */
+const PORTRAIT_SIZES = '(min-width: 1024px) 320px, 78vw';
 
 export default function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
@@ -114,8 +121,9 @@ export default function Hero() {
               transition={{ duration: 0.75, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="mt-6 max-w-[54ch] text-[1.0625rem] leading-relaxed text-ink-soft"
             >
-              Shipping SaaS products end to end with React, Node and MongoDB, with an
-              internship at Krafzen Inc. behind it.
+              Full-stack and Flutter developer based in {PROFILE.location}. Shipped
+              two SaaS platforms at Krafzen Inc. and a surplus-food marketplace
+              from a single Dart codebase.
             </motion.p>
 
             <motion.div
@@ -139,6 +147,42 @@ export default function Hero() {
                 <Download size={17} />
                 Resume
               </button>
+
+              {/* The two profiles a recruiter actually opens, promoted out of
+                  the footer. Icon-only, so both need an accessible name. */}
+              <div className="flex items-center gap-2.5">
+                <a
+                  href={PROFILE.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub profile, opens in a new tab"
+                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width={18}
+                    height={18}
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d={GITHUB_MARK.path} />
+                  </svg>
+                </a>
+                <a
+                  href={PROFILE.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn profile, opens in a new tab"
+                  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-hairline text-ink-soft transition-colors duration-200 hover:border-accent hover:text-accent"
+                >
+                  {/* LinkedIn has no Simple Icons entry and no Lucide glyph, so
+                      the mark is its own logotype set in type rather than a
+                      hand-drawn SVG that could be subtly wrong. */}
+                  <span aria-hidden="true" className="font-display text-[0.9375rem] font-bold tracking-tight">
+                    in
+                  </span>
+                </a>
+              </div>
             </motion.div>
           </div>
 
@@ -147,7 +191,10 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="relative mx-auto w-full max-w-[400px]"
+            /* Capped at 320px rather than the 400px the old cutout used. At
+               400px the head was large enough to crowd the headline column;
+               320 keeps it a portrait rather than the loudest thing on screen. */
+            className="relative mx-auto w-full max-w-[320px]"
           >
             {/* Atmosphere behind the figure. The cutout has no background of
                 its own, so it needs a light source to sit against. */}
@@ -157,38 +204,49 @@ export default function Hero() {
             />
 
             {/* Offset accent slab behind the figure. Purely structural: it
-                gives the portrait depth without a drop shadow. */}
+                gives the portrait depth without a drop shadow.
+
+                Anchored to the top of the figure rather than the full box. The
+                caption adds its own height below the photo, and a full-height
+                outline would read as a frame around the caption too. */}
             <div
               aria-hidden="true"
-              className="absolute -inset-3 rounded-[26px] border border-accent/25"
+              className="absolute inset-x-0 top-0 h-[400px] rounded-[26px] border border-accent/25"
             />
             <div
               aria-hidden="true"
-              className="absolute -right-2 -bottom-2 h-24 w-24 rounded-[26px] bg-accent/12"
+              className="absolute top-[380px] right-0 h-20 w-20 rounded-[26px] bg-accent/12"
             />
 
             <figure>
-              {/* White studio backdrop removed by flood fill, so the portrait
-                  sits directly on the page. 441x513 native, rendered at no
-                  more than 400px wide, so it is never upscaled. */}
-              <picture>
-                <source srcSet={profileWebp} type="image/webp" />
-                <img
-                  src={profileImg}
-                  alt="Ashwani Kumar, full-stack developer"
-                  width={441}
-                  height={513}
-                  fetchPriority="high"
-                  className="h-auto w-full"
-                />
-              </picture>
+              {/* Studio backdrop keyed out at the source, then cropped to 4:5.
+                  WebP only, with no PNG twin: every browser that can run this
+                  React app decodes WebP, and a second copy of the same photo
+                  cost 116 kB to serve an audience that does not exist.
+
+                  width/height are the intrinsic size of the 320px export, so the
+                  frame is reserved before the bytes land and the caption below
+                  never shifts. */}
+              <img
+                src={profile320}
+                srcSet={`${profile320} 320w, ${profile640} 640w`}
+                sizes={PORTRAIT_SIZES}
+                alt={`${PROFILE.name}, ${PROFILE.role.toLowerCase()} based in ${PROFILE.location}`}
+                width={320}
+                height={400}
+                fetchPriority="high"
+                decoding="async"
+                className="h-auto w-full"
+              />
               {/* Caption sits outside the frame. No pill, tag or label is
                   overlaid on the photograph. */}
               <figcaption className="mt-4 flex items-baseline justify-between gap-4">
                 <p className="font-display text-base font-semibold text-ink">
-                  Ashwani Kumar
+                  {PROFILE.name}
                 </p>
-                <p className="font-mono text-xs text-ink-mute">B.Tech CSE, 2026</p>
+                <p className="font-mono text-xs text-ink-mute">
+                  {PROFILE.degree}
+                </p>
               </figcaption>
             </figure>
           </motion.div>

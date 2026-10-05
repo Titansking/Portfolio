@@ -2,45 +2,7 @@ import { Container, Section, SectionHead, Hairline } from '../ui/Section';
 import { Reveal, RevealList, RevealItem } from '../ui/Reveal';
 import { CountUp } from '../ui/CountUp';
 import { HoverRow } from '../ui/Motion';
-
-const LEDGER = [
-  {
-    value: 400,
-    suffix: '+',
-    label: 'Coding Ninjas',
-    detail: 'Recursion, trees and dynamic programming, mostly in Java.',
-  },
-  {
-    value: 160,
-    suffix: '+',
-    label: 'GeeksforGeeks',
-    detail: 'Arrays, searching, sorting, and system design problems.',
-  },
-  { value: 4, suffix: '', label: 'Hacktoberfest PRs', detail: 'Merged in 2023, with a tree planted via Tree-Nation.' },
-];
-
-const CERTS = [
-  {
-    title: 'Data Structures & Algorithms',
-    issuer: 'Coding Ninjas',
-    body: 'Problem-solving mastery across the core algorithms and structures.',
-  },
-  {
-    title: 'Full-Stack Web Development',
-    issuer: '30 Days Coding',
-    body: 'Frontend frameworks, REST API design, and database architecture.',
-  },
-  {
-    title: 'Java Programming',
-    issuer: 'Oracle',
-    body: 'Object-oriented design, data structures, and exception handling.',
-  },
-  {
-    title: 'Open Source Contribution',
-    issuer: 'Hacktoberfest 2023',
-    body: 'Four merged pull requests, recognised with a community tree.',
-  },
-];
+import { LEDGER, CERTS, RECOMMENDATION } from '../../content/profile';
 
 export default function Achievements() {
   return (
@@ -55,6 +17,7 @@ export default function Achievements() {
                 <span className="text-accent">paperwork that came with it.</span>
               </>
             }
+            lede="A recommendation, a problem count, three certifications, and some open source."
           />
         </Reveal>
 
@@ -63,25 +26,26 @@ export default function Achievements() {
             "reliability" clip. */}
         <Reveal delay={0.08} className="mt-14">
           <figure className="rounded-[18px] border border-hairline bg-surface px-7 py-12 sm:px-14 sm:py-16">
-            <blockquote className="max-w-[52ch] font-display text-xl font-medium italic leading-[1.3] pb-2 text-ink sm:text-[1.75rem] sm:leading-[1.3]">
-              &ldquo;Commended for technical execution, ownership, and reliability
-              across our core full-stack platforms.&rdquo;
+            <blockquote className="max-w-[52ch] pb-2 font-display text-xl font-medium italic leading-[1.3] text-ink sm:text-[1.75rem] sm:leading-[1.3]">
+              &ldquo;{RECOMMENDATION.quote}&rdquo;
             </blockquote>
             <figcaption className="mt-8 flex flex-col gap-1">
-              <span className="font-display font-semibold text-ink">Khadija Zain</span>
-              <span className="text-sm text-ink-mute">CEO, Krafzen Inc.</span>
+              <span className="font-display font-semibold text-ink">
+                {RECOMMENDATION.name}
+              </span>
+              <span className="text-sm text-ink-mute">{RECOMMENDATION.role}</span>
             </figcaption>
           </figure>
         </Reveal>
 
-        {/* Ledger. A horizontal rule-separated row, not three equal cards. */}
-        <RevealList className="mt-16 grid divide-y divide-hairline sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        {/* Ledger. A horizontal rule-separated row, not four equal cards. */}
+        <RevealList className="mt-16 grid divide-y divide-hairline sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
           {LEDGER.map((stat) => (
             <RevealItem
               key={stat.label}
-              className="py-8 sm:px-8 sm:py-0 first:sm:pl-0 last:sm:pr-0"
+              className="py-8 sm:px-8 sm:py-0 sm:first:pl-0 sm:last:pr-0"
             >
-              <p className="font-display text-[3.5rem] font-bold leading-none tracking-tight text-accent">
+              <p className="font-display text-[3.25rem] font-bold leading-none tracking-tight text-accent">
                 <CountUp value={stat.value} suffix={stat.suffix} />
               </p>
               <p className="mt-4 font-display font-semibold text-ink">{stat.label}</p>
