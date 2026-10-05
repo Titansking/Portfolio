@@ -32,8 +32,10 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashwani-admin-2026';
 // Always include known production origins as defaults so CORS works even if env var is misconfigured
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
+  'http://localhost:5174',
   'http://localhost:3000',
-  'https://portfolio--ashwani.vercel.app',
+  'https://portfolio-ashwani.vercel.app',
+  'https://ashwanikumar.dev',
 ];
 
 const envOrigins = process.env.FRONTEND_URL
@@ -54,18 +56,34 @@ app.use(cors({
     if (allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      /* Refuse by returning "no CORS headers" rather than callback(new Error()).
+         Passing an Error makes cors() delegate to the next error handler, which
+         answers 500 with an HTML stack trace and, critically, without the
+         Access-Control-Allow-Origin header. The browser then reports the
+         confusing "Response to preflight request doesn't pass access control
+         check" instead of a plain refusal. callback(null, false) is the
+         documented way to deny, and it still logs the offending origin. */
       console.warn(`[CORS] Blocked request from origin: ${origin}`);
-      callback(new Error(`CORS: Origin ${origin} is not allowed.`));
+      callback(null, false);
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200
+  // Cannot be true while origins are an explicit allowlist: the spec forbids
+  // combining credentialed requests with a wildcard, and browsers reject the
+  // response outright. The site is token-authenticated, not cookie-based, so
+  // nothing here needs credentials.
+  credentials: false,
+  optionsSuccessStatus: 204
 }));
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+/* No separate app.options('*', cors()) handler.
+
+   app.use(cors()) above already answers preflights for every route, including
+   ones with no explicit OPTIONS handler. Adding a second cors() here ran with
+   default options, whose origin is '*', and it overwrote the allowlist
+   decision: a blocked origin received Access-Control-Allow-Origin: * and was
+   let through. Two handlers meant the strict one was pointless. */
 
 app.use(express.json());
 
