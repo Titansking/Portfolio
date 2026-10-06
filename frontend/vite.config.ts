@@ -25,25 +25,5 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss(), siteUrlPlugin(siteUrl)],
-    build: {
-      // The Firestore Web SDK is ~590 kB minified and only reachable through the
-      // `import()` inside sendContactMessage's fallback, so it is a separate,
-      // on-demand chunk that never runs on first paint. It is named for clarity
-      // and the warning threshold is lifted just past it, which still leaves the
-      // real entry chunk (currently ~425 kB) plenty of room before Vite complains.
-      chunkSizeWarningLimit: 600,
-      rolldownOptions: {
-        output: {
-          advancedChunks: {
-            groups: [
-              {
-                name: 'firestore-fallback',
-                test: /node_modules[\\/]@firebase[\\/]firestore|node_modules[\\/]firebase[\\/]firestore/,
-              },
-            ],
-          },
-        },
-      },
-    },
   }
 })

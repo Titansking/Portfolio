@@ -87,61 +87,62 @@ const getHeaders = (token?: string) => {
 // -------------------------------------------------------------
 
 export async function sendContactMessage(data: ContactData): Promise<ContactResponse> {
-  // 1. Attempt writing to local Express backend API (with 8s timeout)
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
+  /* The Express backend is the only working delivery path: it validates the
+     payload, writes to Firestore with admin credentials, and emails a notice.
+     A browser can only report a CORS rejection as an opaque network error, so
+     an origin the backend does not allow surfaces here identically to the
+     backend being down. Say which one it was, otherwise the form just says
+     "failed" and the real cause stays buried in the console. */
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    const response = await fetch(`${API_URL}/contact`, {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/contact`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify(data),
       signal: controller.signal,
     });
-    clearTimeout(timeoutId);
-
-    if (response.ok) {
-      const result = await response.json();
-      return {
-        success: true,
-        message: result.message || 'Success! Your message was delivered.',
-        id: result.id,
-      };
-    }
   } catch (backendError) {
-    console.log('[API Service] Backend unreachable or timed out. Falling back to direct Firebase write.', backendError);
-  }
-
-  // 2. Fallback: Write directly to Firebase Firestore using client Web SDK.
-  //    Imported lazily so the Firestore SDK lands in its own chunk and is only
-  //    downloaded when the Express backend is actually unreachable.
-  try {
-    const [{ db }, { addDoc, collection, serverTimestamp }] = await Promise.all([
-      import('./firebase'),
-      import('firebase/firestore'),
-    ]);
-
-    const docRef = await addDoc(collection(db, 'messages'), {
-      name: data.name,
-      email: data.email,
-      message: data.message,
-      createdAt: serverTimestamp(),
-    });
-
-    console.log('[Firestore Client] ✅ Saved message successfully to Firestore collection:', docRef.id);
-    return {
-      success: true,
-      message: 'Success! Your message has been saved directly to Firestore database.',
-      id: docRef.id,
-    };
-  } catch (firestoreError) {
-    console.error('[Firestore Client] ❌ Direct write failed:', firestoreError);
+    clearTimeout(timeoutId);
+    console.error('[API Service] Contact request never reached the backend:', backendError);
     return {
       success: false,
-      message: 'Unable to send your message. Please email me directly at akumarclash1@gmail.com',
-      error: errorMessage(firestoreError),
+      message:
+        'Could not reach the contact service. It may be waking up, or this page ' +
+        'is not an origin the server allows. Please email me directly instead.',
+      error: errorMessage(backendError),
     };
   }
+  clearTimeout(timeoutId);
+
+  if (response.ok) {
+    const result = await response.json();
+    return {
+      success: true,
+      message: result.message || 'Success! Your message was delivered.',
+      id: result.id,
+    };
+  }
+
+  /* Reached the backend but it refused. Read the body for its own error text
+     rather than inventing one, since it distinguishes a validation failure
+     (the visitor's fault, retryable) from a 500 (our fault). */
+  let detail = '';
+  try {
+    detail = (await response.json())?.error ?? '';
+  } catch {
+    // Non-JSON error body; fall through to the generic text below.
+  }
+
+  return {
+    success: false,
+    message:
+      detail ||
+      `The contact service rejected your message (HTTP ${response.status}). Please email me directly instead.`,
+    error: `HTTP ${response.status}`,
+  };
 }
 
 export async function fetchContactMessages(token: string): Promise<ContactMessage[]> {

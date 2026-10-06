@@ -76,10 +76,21 @@ let mockMessages: any[] = [
 ];
 
 try {
-  const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  /* The key may arrive either as inline JSON or as a path to a mounted secret
+     file. Paired env vars are far easier to set on Render, Vercel or Railway
+     than a mounted file, so inline JSON is tried first and a path second. */
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY?.trim();
 
-  if (serviceAccountPath && fs.existsSync(serviceAccountPath)) {
-    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+  const readServiceAccount = (): Record<string, unknown> | null => {
+    if (!raw) return null;
+    if (raw.startsWith('{')) return JSON.parse(raw);
+    if (fs.existsSync(raw)) return JSON.parse(fs.readFileSync(raw, 'utf8'));
+    return null;
+  };
+
+  const serviceAccount = readServiceAccount();
+
+  if (serviceAccount) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
@@ -88,14 +99,21 @@ try {
   } else {
     isMockMode = true;
     console.log('--------------------------------------------------------------------');
-    console.log('⚠️  DEVELOPER WARNING: FIREBASE_SERVICE_ACCOUNT_KEY was not found or invalid.');
-    console.log('👉 Running in MOCK mode. Database changes will update inside memory arrays.');
+    console.log('⚠️  FIREBASE_SERVICE_ACCOUNT_KEY is missing or unreadable.');
+    console.log('👉 Running in MOCK mode: writes go to memory and are LOST on restart.');
+    console.log('👉 Paste the service-account JSON inline, or point this at a file path.');
     console.log('--------------------------------------------------------------------');
   }
 } catch (error) {
   console.error('[Firebase Setup] ❌ Error initializing Firebase Admin:', error);
   isMockMode = true;
   console.log('[Firebase Setup] Falling back to MOCK mode.');
+}
+
+/** True when no service account was loaded, so writes are not persisted. Routes
+ *  use this to refuse work rather than report a false success. */
+export function isDatabaseMocked(): boolean {
+  return isMockMode || !db;
 }
 
 // -------------------------------------------------------------

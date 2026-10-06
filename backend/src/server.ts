@@ -14,9 +14,10 @@ import {
   addBlog, 
   updateBlog, 
   deleteBlog, 
-  incrementPageViews, 
+incrementPageViews,
   getAnalyticsSummary,
-  incrementResumeDownloads
+  incrementResumeDownloads,
+  isDatabaseMocked
 } from './firebase';
 import { sendEmailNotification, sendResumeDownloadNotification } from './nodemailer';
 
@@ -25,35 +26,91 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-ashwani-portfolio-2026';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ashwani-admin-2026';
+/* Secrets come only from the environment.
 
-// Enable CORS to support multiple frontend origins (e.g. localhost, production domain, Vercel deployments)
-// Always include known production origins as defaults so CORS works even if env var is misconfigured
+   An earlier version fell back to a password and signing key committed in this
+   file. Because the repository is public, that fallback was a live admin
+   login for anyone who read the source. There is no default now: in production
+   the process refuses to start, and only `npm run dev` gets a generated
+   throwaway pair so local work still runs without setup. */
+const isProduction = process.env.NODE_ENV === 'production';
+
+function requireSecret(name: string): string {
+  const value = process.env[name]?.trim();
+  if (value) return value;
+
+  if (isProduction) {
+    console.error(`[Config] FATAL: ${name} is not set. Refusing to start in production.`);
+    process.exit(1);
+  }
+
+  /* Dev-only: random per boot, so nothing here is ever a real credential. */
+  console.warn(`[Config] ${name} is unset. Using a random development-only value.`);
+  return require('crypto').randomBytes(32).toString('hex');
+}
+
+const JWT_SECRET = requireSecret('JWT_SECRET');
+const ADMIN_PASSWORD = requireSecret('ADMIN_PASSWORD');
+
+/* Origin allowlist.
+
+   Every entry may be an exact origin or contain `*` as a whole-label wildcard,
+   e.g. `https://*.vercel.app`. Matching is anchored and `*` never crosses a
+   `/`, so a pattern cannot be widened into matching an arbitrary path.
+
+   FRONTEND_URL is a comma-separated list appended to the defaults, which keeps
+   the deployed service working even when the env var is absent or stale. */
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
-  'http://localhost:5174',
   'http://localhost:3000',
-  'https://portfolio-ashwani.vercel.app',
   'https://ashwanikumar.dev',
+  'https://www.ashwanikumar.dev',
+  'https://portfolio-ashwani.vercel.app',
 ];
+
+/* Vercel issues a fresh hostname per preview deploy (`<project>-<hash>-<team>.vercel.app`),
+   so pinning each one is impossible; a wildcard covers previews without opening
+   the API to arbitrary third-party sites. */
+const PREVIEW_ORIGIN_PATTERNS = ['https://*.vercel.app'];
 
 const envOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim().replace(/\/$/, ''))
   : [];
 
-// Merge env-based origins with hardcoded defaults (deduplicated)
-const allowedOrigins = [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...envOrigins])];
+const allowedPatterns = [
+  ...new Set([...DEFAULT_ALLOWED_ORIGINS, ...PREVIEW_ORIGIN_PATTERNS, ...envOrigins]),
+];
 
-console.log('[CORS] Allowed origins:', allowedOrigins);
+/* Vite hands out the next free port when 5173 is busy and `vite preview` uses
+   4173, so a fixed list of development ports blocks ordinary local work. Only
+   loopback is matched, never a remote host. */
+const LOOPBACK_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/;
+
+function patternToRegExp(pattern: string): RegExp {
+  const escaped = pattern
+    .split('*')
+    .map(part => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('[^/]*');
+  return new RegExp(`^${escaped}$`);
+}
+
+function isAllowedOrigin(origin: string): boolean {
+  // Normalize: strip trailing slash.
+  const normalizedOrigin = origin.replace(/\/$/, '');
+  if (LOOPBACK_ORIGIN.test(normalizedOrigin)) return true;
+  return allowedPatterns.some(
+    pattern => pattern === '*' || patternToRegExp(pattern).test(normalizedOrigin),
+  );
+}
+
+console.log('[CORS] Allowed origin patterns:', allowedPatterns);
+console.log('[CORS] Any loopback port is allowed (dev).');
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
-    // Normalize: strip trailing slash
-    const normalizedOrigin = origin.replace(/\/$/, '');
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(normalizedOrigin)) {
+    if (isAllowedOrigin(origin)) {
       callback(null, true);
     } else {
       /* Refuse by returning "no CORS headers" rather than callback(new Error()).
@@ -63,7 +120,10 @@ app.use(cors({
          confusing "Response to preflight request doesn't pass access control
          check" instead of a plain refusal. callback(null, false) is the
          documented way to deny, and it still logs the offending origin. */
-      console.warn(`[CORS] Blocked request from origin: ${origin}`);
+      console.warn(
+        `[CORS] Blocked request from origin: ${origin}. ` +
+        `Add it to FRONTEND_URL (comma-separated; '*' allowed as a whole-label wildcard).`,
+      );
       callback(null, false);
     }
   },
@@ -162,6 +222,17 @@ app.post('/api/contact', async (req: Request, res: Response) => {
 
     if (!message || typeof message !== 'string' || message.trim() === '') {
       res.status(400).json({ error: 'Please write a message before submitting.' });
+      return;
+    }
+
+    /* Refuse rather than accept-and-drop. In mock mode a write only lands in an
+       in-memory array that a restart discards, so a 200 here would tell the
+       visitor their message arrived when it did not. */
+    if (isDatabaseMocked()) {
+      console.error('[Contact] Rejected: no Firebase service account, message would not be saved.');
+      res.status(503).json({
+        error: 'The contact service is temporarily unable to store messages. Please email me directly instead.'
+      });
       return;
     }
 
